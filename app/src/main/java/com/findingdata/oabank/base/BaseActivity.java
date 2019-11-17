@@ -1,5 +1,6 @@
 package com.findingdata.oabank.base;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,10 +27,15 @@ public class BaseActivity extends AppCompatActivity {
         ExitAppUtils.getInstance().addActivity(this);
         x.view().inject(this);
         setStatusBar();
+        setOrientation();
     }
     //设置状态栏颜色
     protected void setStatusBar(){
         StatusBarUtil.setStatusBarMode(this, true, R.color.white);
+    }
+    //设置方向
+    protected void setOrientation(){
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     @Override
