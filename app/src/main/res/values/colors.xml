@@ -5,6 +5,11 @@
     <color name="colorAccent">#D81B60</color>
 
 
+
     <color name="white">#FFFFFF</color>
     <color name="primary">#00774F</color>
+    <color name="backgroud_color">#FFFDEF</color>
+    <color name="text_primary">#333333</color>
+    <color name="text_desc">#999999</color>
+    <color name="bg_search">#c9c9c9</color>
 </resources>

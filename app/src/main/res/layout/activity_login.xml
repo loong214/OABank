@@ -20,19 +20,22 @@
         android:gravity="center"
         />
     <EditText
+        android:id="@+id/login_et_tel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:hint="输入手机号"
         />
     <EditText
+        android:id="@+id/login_et_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:inputType="textPassword"
         android:hint="输入密码"
         />
     <Button
-        android:id="@+id/login_btn_login"
+        android:id="@+id/login_btn_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -41,10 +44,4 @@
         android:textColor="#fff"
         android:textSize="16sp"
         />
-    <TextView
-        android:id="@+id/login_tv_base_url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="123"/>
 </LinearLayout>

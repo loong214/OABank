@@ -1,12 +1,14 @@
 package com.findingdata.oabank.base;
 
-import android.app.Fragment;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.xutils.x;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by zengx on 2019/11/17.

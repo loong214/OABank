@@ -34,6 +34,13 @@
         </activity>
         <activity android:name=".ui.MainActivity" />
         <activity android:name=".ui.LoginActivity" />
+        <activity android:name=".ui.NetworkErrorActivity" />
+
+        <receiver android:name=".receiver.NetBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
         <!--蒲公英APPKEY 必填 -->
         <meta-data
             android:name="PGYER_APPID"
