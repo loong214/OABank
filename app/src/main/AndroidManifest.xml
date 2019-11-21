@@ -35,7 +35,8 @@
         <activity android:name=".ui.MainActivity" />
         <activity android:name=".ui.LoginActivity" />
         <activity android:name=".ui.NetworkErrorActivity" />
-
+        <activity android:name=".ui.PersonActivity" />
+        <activity android:name=".ui.NotifyActivity" />
         <receiver android:name=".receiver.NetBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

@@ -11,8 +11,11 @@ import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
+import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.NetworkUtils;
+import com.findingdata.oabank.utils.SharedPreferencesManage;
+import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
 import com.findingdata.oabank.utils.http.XHttp;
 
@@ -63,9 +66,15 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
-                LogUtils.d(result);
-                startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                finish();
+                LogUtils.d("result",result);
+                BaseEntity<String> entity= JsonParse.parse(result,String.class);
+                if(entity.getCode()==200){
+                    SharedPreferencesManage.setToken(entity.getData());
+                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                    finish();
+                }else{
+                    Toast.makeText(LoginActivity.this,entity.getMsg(),Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

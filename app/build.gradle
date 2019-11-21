@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
 
 def Release_Url = "\"http://oa.cszfp.net:5810/\""
-def Debug_Url = "\"http://192.168.0.200:3000/\""
+def Debug_Url = "\"http://10.222.5.20:3000/\""
+//def Debug_Url = "\"http://192.168.0.200:3000/\""
 
 android {
     compileSdkVersion 28
@@ -64,4 +65,8 @@ dependencies {
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     implementation files('libs/commons-codec-1.4.jar')
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.50'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+
 }

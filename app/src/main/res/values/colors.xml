@@ -12,4 +12,5 @@
     <color name="text_primary">#333333</color>
     <color name="text_desc">#999999</color>
     <color name="bg_search">#c9c9c9</color>
+    <color name="text_warn">#fd6f6f</color>
 </resources>

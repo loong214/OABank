@@ -4,15 +4,17 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
-import com.findingdata.oabank.utils.SharedPreferencesManage;
+import com.findingdata.oabank.utils.ExitAppUtils;
 import com.findingdata.oabank.utils.Utils;
 import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
@@ -20,6 +22,7 @@ import com.pgyersdk.update.UpdateManagerListener;
 import com.pgyersdk.update.javabean.AppBean;
 
 import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
 import java.io.File;
@@ -27,21 +30,61 @@ import java.io.File;
 import androidx.annotation.Nullable;
 
 /**
- * Created by zengx on 2019/11/17.
- * Describe: 应用启动页
+ * Created by Loong on 2019/11/21.
+ * Version: 1.0
+ * Describe: 个人中心Activity
  */
-@ContentView(R.layout.activity_launch)
-public class LaunchActivity extends BaseActivity {
-    @ViewInject(R.id.tv_loading_version)
-    private TextView tv_loading_version;
+@ContentView(R.layout.acitvity_person)
+public class PersonActivity extends BaseActivity {
+    @ViewInject(R.id.toolbar_tv_title)
+    TextView toolbar_title;
+    @ViewInject(R.id.person_ll_logout_layer)
+    LinearLayout logout_layer;
 
     private ProgressDialog progressDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tv_loading_version.setText("v-"+ Utils.getCurrentVersion(this)+" : "+Utils.getCurrentBuild(this));
-        checkVersion();
+        toolbar_title.setText("个人中心");
     }
+
+    @Event({R.id.toolbar_btn_back, R.id.person_ll_version,R.id.person_ll_logout,R.id.person_ll_logout_layer,R.id.person_ll_logout_layer_change,
+            R.id.person_ll_logout_out, R.id.person_ll_logout_cancel})
+    private void onClickEvent(View v){
+        switch (v.getId()){
+            case R.id.toolbar_btn_back:
+                finish();
+                break;
+            case R.id.person_ll_version:
+                checkVersion();
+                break;
+            case R.id.person_ll_logout:
+                logout_layer.setVisibility(View.VISIBLE);
+                logout_layer.startAnimation(alphaAnimation());
+                break;
+            case R.id.person_ll_logout_layer_change:
+                startActivity(new Intent(PersonActivity.this, LoginActivity.class));
+                ExitAppUtils.getInstance().exit();
+                break;
+            case R.id.person_ll_logout_out:
+                ExitAppUtils.getInstance().exit();
+                break;
+                default:
+                    logout_layer.setVisibility(View.GONE);
+                    break;
+        }
+    }
+
+    /**
+     * 退出ActionSheet动画
+     * @return
+     */
+    private AlphaAnimation alphaAnimation(){
+        AlphaAnimation animation=new AlphaAnimation(0,1);
+        animation.setDuration(200);
+        return animation;
+    }
+
 
     /**
      * 检查版本
@@ -56,14 +99,7 @@ public class LaunchActivity extends BaseActivity {
                     public void onNoUpdateAvailable() {
                         //没有更新是回调此方法
                         Log.d("pgyer", "there is no new version");
-                        String token= SharedPreferencesManage.getToken();
-                        if(!TextUtils.isEmpty(token)){
-                            startActivity(new Intent(LaunchActivity.this,MainActivity.class));
-                        }else{
-                            finish();
-                            startActivity(new Intent(LaunchActivity.this,LoginActivity.class));
-                        }
-
+                        Toast.makeText(PersonActivity.this,"已经是最新版本",Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -74,8 +110,8 @@ public class LaunchActivity extends BaseActivity {
                                 + " new versionName is " + appBean.getVersionName());
                         //调用以下方法，DownloadFileListener 才有效；
                         //如果完全使用自己的下载方法，不需要设置DownloadFileListener
-                        if(Utils.getCurrentVersion(LaunchActivity.this).equals(appBean.getVersionName())){
-                            new AlertDialog.Builder(LaunchActivity.this)
+                        if(Utils.getCurrentVersion(PersonActivity.this).equals(appBean.getVersionName())){
+                            new AlertDialog.Builder(PersonActivity.this)
                                     .setTitle("更新")
                                     .setMessage("发现新版本"+appBean.getVersionName()+"\n"+appBean.getReleaseNote())
                                     .setCancelable(false)
@@ -90,11 +126,11 @@ public class LaunchActivity extends BaseActivity {
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
                                             finish();
-                                            startActivity(new Intent(LaunchActivity.this,LoginActivity.class));
+                                            startActivity(new Intent(PersonActivity.this,LoginActivity.class));
                                         }
                                     }).show();
                         }else{
-                            new AlertDialog.Builder(LaunchActivity.this)
+                            new AlertDialog.Builder(PersonActivity.this)
                                     .setTitle("强制更新")
                                     .setMessage("发现新版本"+appBean.getVersionName()+"\n"+appBean.getReleaseNote())
                                     .setCancelable(false)
@@ -114,8 +150,7 @@ public class LaunchActivity extends BaseActivity {
                         //更新检测失败回调
                         //更新拒绝（应用被下架，过期，不在安装有效期，下载次数用尽）以及无网络情况会调用此接口
                         Log.e("pgyer", "check update failed ", e);
-                        finish();
-                        startActivity(new Intent(LaunchActivity.this,LoginActivity.class));
+                        Toast.makeText(PersonActivity.this,"检查最新版异常",Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setDownloadFileListener(new DownloadFileListener() {
@@ -159,5 +194,4 @@ public class LaunchActivity extends BaseActivity {
             }
         }
     }
-
 }

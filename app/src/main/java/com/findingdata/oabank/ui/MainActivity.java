@@ -1,6 +1,7 @@
 package com.findingdata.oabank.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -83,10 +84,10 @@ public class MainActivity extends BaseActivity {
                 Toast.makeText(MainActivity.this,"filter",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.main_btn_person:
-                Toast.makeText(MainActivity.this,"person",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this,PersonActivity.class));
                 break;
             case R.id.main_btn_notify:
-                Toast.makeText(MainActivity.this,"notify",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this,NotifyActivity.class));
                 break;
         }
     }
