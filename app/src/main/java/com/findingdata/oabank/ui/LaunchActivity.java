@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
+import com.findingdata.oabank.entity.Transition;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.Utils;
 import com.pgyersdk.update.DownloadFileListener;
@@ -56,16 +57,15 @@ public class LaunchActivity extends BaseActivity {
                     public void onNoUpdateAvailable() {
                         //没有更新是回调此方法
                         Log.d("pgyer", "there is no new version");
+                        finish();
                         String token= SharedPreferencesManage.getToken();
                         if(!TextUtils.isEmpty(token)){
-                            startActivity(new Intent(LaunchActivity.this,MainActivity.class));
+                            startActivity(MainActivity.class, Transition.RightIn);
                         }else{
-                            finish();
-                            startActivity(new Intent(LaunchActivity.this,LoginActivity.class));
+                            startActivity(LoginActivity.class, Transition.RightIn);
                         }
 
                     }
-
                     @Override
                     public void onUpdateAvailable(final AppBean appBean) {
                         //有更新回调此方法

@@ -2,8 +2,6 @@ package com.findingdata.oabank.utils.http;
 
 import android.util.Log;
 
-import com.findingdata.oabank.utils.NetworkUtils;
-
 import org.xutils.common.Callback;
 
 /**

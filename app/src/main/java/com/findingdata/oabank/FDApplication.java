@@ -3,6 +3,9 @@ package com.findingdata.oabank;
 import android.app.Application;
 import android.content.Context;
 
+import com.findingdata.oabank.receiver.DemoPushService;
+import com.findingdata.oabank.receiver.GeTuiIntentService;
+import com.igexin.sdk.PushManager;
 import com.pgyersdk.crash.PgyCrashManager;
 
 import org.xutils.x;
@@ -25,6 +28,10 @@ public class FDApplication extends Application {
         x.Ext.setDebug(BuildConfig.DEBUG); // 是否输出debug日志, 开启debug会影响性能.
         //蒲公英crash收集注册
         PgyCrashManager.register();
+        //初始化个推推送
+        com.igexin.sdk.PushManager.getInstance().initialize(getApplicationContext(), DemoPushService.class);
+        //注册个推推送服务事件接收类
+        PushManager.getInstance().registerPushIntentService(this.getApplicationContext(), GeTuiIntentService.class);
     }
 
 

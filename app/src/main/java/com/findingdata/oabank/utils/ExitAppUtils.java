@@ -19,7 +19,8 @@ public class ExitAppUtils {
     /**
      * 将构造函数私有化
      */
-    private ExitAppUtils(){};
+    private ExitAppUtils(){
+    }
 
     /**
      * 获取ExitAppUtils的实例，保证只有一个ExitAppUtils实例存在

@@ -8,12 +8,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
+import com.findingdata.oabank.entity.Transition;
+import com.findingdata.oabank.utils.AtyTransitionUtil;
 import com.findingdata.oabank.utils.ExitAppUtils;
 import com.findingdata.oabank.utils.Utils;
 import com.pgyersdk.update.DownloadFileListener;
@@ -38,6 +41,8 @@ import androidx.annotation.Nullable;
 public class PersonActivity extends BaseActivity {
     @ViewInject(R.id.toolbar_tv_title)
     TextView toolbar_title;
+    @ViewInject(R.id.toolbar_btn_action)
+    private ImageButton toolbar_btn_action;
     @ViewInject(R.id.person_ll_logout_layer)
     LinearLayout logout_layer;
 
@@ -46,6 +51,7 @@ public class PersonActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         toolbar_title.setText("个人中心");
+        toolbar_btn_action.setVisibility(View.INVISIBLE);
     }
 
     @Event({R.id.toolbar_btn_back, R.id.person_ll_version,R.id.person_ll_logout,R.id.person_ll_logout_layer,R.id.person_ll_logout_layer_change,
@@ -53,7 +59,7 @@ public class PersonActivity extends BaseActivity {
     private void onClickEvent(View v){
         switch (v.getId()){
             case R.id.toolbar_btn_back:
-                finish();
+                finishWithTransition(Transition.LeftOut);
                 break;
             case R.id.person_ll_version:
                 checkVersion();

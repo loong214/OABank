@@ -11,6 +11,11 @@ import android.widget.Toast;
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
+import com.findingdata.oabank.entity.Transition;
+import com.findingdata.oabank.receiver.GeTuiIntentService;
+import com.findingdata.oabank.utils.AtyTransitionUtil;
+import com.findingdata.oabank.utils.LogUtils;
+import com.igexin.sdk.PushManager;
 
 
 import org.xutils.view.annotation.ContentView;
@@ -53,6 +58,8 @@ public class MainActivity extends BaseActivity {
         fragmentManager = getSupportFragmentManager();
         initTabs();
         setTabSelection(0);
+        String cid = PushManager.getInstance().getClientid(this);
+        LogUtils.d("cid"+cid);
     }
     private void initTabs() {
         tabs[0] = tab_todo;
@@ -84,10 +91,13 @@ public class MainActivity extends BaseActivity {
                 Toast.makeText(MainActivity.this,"filter",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.main_btn_person:
-                startActivity(new Intent(MainActivity.this,PersonActivity.class));
+                startActivity(PersonActivity.class, Transition.LeftIn);
+//                startActivity(new Intent(MainActivity.this,PersonActivity.class));
+//                AtyTransitionUtil.enterFromLeft(MainActivity.this);
                 break;
             case R.id.main_btn_notify:
-                startActivity(new Intent(MainActivity.this,NotifyActivity.class));
+                startActivity(NotifyActivity.class,Transition.RightIn);
+//                startActivity(new Intent(MainActivity.this,NotifyActivity.class));
                 break;
         }
     }
