@@ -3,12 +3,16 @@ package com.findingdata.oabank;
 import android.app.Application;
 import android.content.Context;
 
+import com.findingdata.oabank.entity.Transition;
 import com.findingdata.oabank.receiver.DemoPushService;
 import com.findingdata.oabank.receiver.GeTuiIntentService;
 import com.igexin.sdk.PushManager;
 import com.pgyersdk.crash.PgyCrashManager;
 
 import org.xutils.x;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by zengx on 2019/11/14.
@@ -18,6 +22,8 @@ public class FDApplication extends Application {
 
     public static FDApplication getInstance = null;
     private Context mContext;
+
+    public static Map<Class, Transition> activityTrans=new HashMap<>();
 
     @Override
     public void onCreate() {

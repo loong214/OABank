@@ -1,28 +1,24 @@
 package com.findingdata.oabank.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
 import com.findingdata.oabank.entity.Transition;
-import com.findingdata.oabank.receiver.GeTuiIntentService;
-import com.findingdata.oabank.utils.AtyTransitionUtil;
 import com.findingdata.oabank.utils.LogUtils;
-import com.igexin.sdk.PushManager;
-
 
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -45,6 +41,8 @@ public class MainActivity extends BaseActivity {
     private TextView tab_pause;
     @ViewInject(R.id.main_tabs_tv_stop)
     private TextView tab_stop;
+    @ViewInject(R.id.drawer_layout)
+    private DrawerLayout drawerLayout;
 
 
     private Context context;
@@ -56,10 +54,15 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         this.context=this;
         fragmentManager = getSupportFragmentManager();
+        //关闭手势滑动
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        //替换NavigationView
+        fragmentManager.beginTransaction().replace(R.id.nav_view,
+                new NavigationViewFragment()).commitAllowingStateLoss();
         initTabs();
         setTabSelection(0);
-        String cid = PushManager.getInstance().getClientid(this);
-        LogUtils.d("cid"+cid);
+
+
     }
     private void initTabs() {
         tabs[0] = tab_todo;
@@ -69,7 +72,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Event({R.id.main_tabs_ll_todo,R.id.main_tabs_ll_doing,R.id.main_tabs_ll_pause,R.id.main_tabs_ll_stop,
-            R.id.main_tv_search,R.id.main_btn_filter,R.id.main_btn_person,R.id.main_btn_notify})
+            R.id.main_tv_search,R.id.main_btn_filter,R.id.main_btn_person,R.id.main_btn_notify,R.id.main_btn_add})
     private void onClickEvent(View v){
         switch (v.getId()){
             case R.id.main_tabs_ll_todo:
@@ -85,19 +88,20 @@ public class MainActivity extends BaseActivity {
                 setTabSelection(3);
                 break;
             case R.id.main_tv_search:
-                Toast.makeText(MainActivity.this,"search",Toast.LENGTH_SHORT).show();
+                startActivity(ProjectSearchActivity.class);
                 break;
             case R.id.main_btn_filter:
-                Toast.makeText(MainActivity.this,"filter",Toast.LENGTH_SHORT).show();
+                drawerLayout.openDrawer(GravityCompat.END);
+
                 break;
             case R.id.main_btn_person:
-                startActivity(PersonActivity.class, Transition.LeftIn);
-//                startActivity(new Intent(MainActivity.this,PersonActivity.class));
-//                AtyTransitionUtil.enterFromLeft(MainActivity.this);
+                startActivity(PersonActivity.class,Transition.LeftIn);
                 break;
             case R.id.main_btn_notify:
-                startActivity(NotifyActivity.class,Transition.RightIn);
-//                startActivity(new Intent(MainActivity.this,NotifyActivity.class));
+                startActivity(NotifyActivity.class);
+                break;
+            case R.id.main_btn_add:
+                startActivity(AddProjectActivity.class);
                 break;
         }
     }
@@ -111,7 +115,7 @@ public class MainActivity extends BaseActivity {
 
         for (int i = 0; i < tabs.length; i++) {
             if (i == index) {
-                tabs[i].setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                tabs[i].setTextColor(ContextCompat.getColor(context, R.color.primary));
             } else {
                 tabs[i].setTextColor(ContextCompat.getColor(context, R.color.text_desc));
             }

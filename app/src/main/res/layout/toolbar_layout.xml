@@ -4,17 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:background="@color/primary"
+    android:background="@color/white"
     android:padding="10dp"
     >
 
-    <ImageButton
+    <TextView
         android:id="@+id/toolbar_btn_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_action_back"
-        />
-
+        android:text="返回"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:drawableLeft="@drawable/ic_action_back"
+        android:textColor="@color/text_primary"/>
     <TextView
         android:id="@+id/toolbar_tv_title"
         android:layout_width="0dp"
@@ -22,7 +24,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="18sp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_primary"
         />
 
     <ImageButton
@@ -30,5 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/ic_action_more"
+        android:visibility="invisible"
         />
 </LinearLayout>

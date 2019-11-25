@@ -10,8 +10,6 @@ import android.os.Bundle;
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.entity.Transition;
 import com.findingdata.oabank.receiver.NetBroadcastReceiver;
-import com.findingdata.oabank.ui.MainActivity;
-import com.findingdata.oabank.ui.PersonActivity;
 import com.findingdata.oabank.utils.AtyTransitionUtil;
 import com.findingdata.oabank.utils.ExitAppUtils;
 import com.findingdata.oabank.utils.LogUtils;
@@ -22,6 +20,8 @@ import org.xutils.x;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import static com.findingdata.oabank.FDApplication.activityTrans;
 
 /**
  * Created by zengx on 2019/11/17.
@@ -69,6 +69,10 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
         super.onDestroy();
         unregisterReceiver(netBroadcastReceiver);
         ExitAppUtils.getInstance().delActivity(this);
+        if(isActivityTrans()){
+            Class clazz=this.getClass();
+            activityTrans.remove(clazz);
+        }
     }
 
     @Override
@@ -77,11 +81,23 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
     }
 
     /**
+     * 启动新的Activity 默认Trans-LeftIn
+     * @param clazz
+     */
+    public void startActivity(Class clazz){
+        Transition transition=Transition.RightIn;
+        activityTrans.put(clazz,transition);
+        startActivity(new Intent(this, clazz));
+        executeTransition(transition);
+    }
+
+    /**
      * 启动新的Activity
      * @param clazz
      * @param transition  转场动画
      */
     public void startActivity(Class clazz, Transition transition){
+        activityTrans.put(clazz,transition);
         startActivity(new Intent(this, clazz));
         executeTransition(transition);
     }
@@ -93,6 +109,7 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
      * @param transition 转场动画
      */
     public void startActivity(Class clazz, Bundle bundle,Transition transition){
+        activityTrans.put(clazz,transition);
         Intent intent = new Intent();
         intent.setClass(this, clazz);
         intent.putExtras(bundle);
@@ -108,6 +125,7 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
      * @param transition 转场动画
      */
     public void startActivityForResult( Class clazz, Bundle bundle, int requestCode,Transition transition) {
+        activityTrans.put(clazz,transition);
         Intent intent = new Intent();
         intent.setClass(this, clazz);
         intent.putExtras(bundle);
@@ -115,14 +133,17 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
         executeTransition(transition);
     }
 
-    /**
-     *  关闭当前Activity
-     * @param transition 转场动画
-     */
-    public void finishWithTransition(Transition transition){
-        finish();
-        executeTransition(transition);
+    @Override
+    public void finish() {
+        super.finish();
+        if(isActivityTrans()){
+            Class clazz=this.getClass();
+            Transition currentTrans=getTrans(clazz);
+            activityTrans.remove(clazz);
+            executeTransition(getReverse(currentTrans));
+        }
     }
+
     //执行转场
     private void executeTransition(Transition transition){
         switch (transition){
@@ -151,5 +172,54 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
                 AtyTransitionUtil.exitToRight(this);
                 break;
         }
+    }
+
+    //监听返回键
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    //获取当前activity的Trans
+    private Transition getTrans(Class clazz){
+        return activityTrans.get(clazz);
+    }
+    //当前Activity是否存在Trans
+    private Boolean isActivityTrans(){
+        return activityTrans.containsKey(this.getClass());
+    }
+    //获取反向的Trans
+    private Transition getReverse(Transition transition){
+        Transition tran;
+        switch (transition){
+            case TopIn:
+                tran = Transition.TopOut;
+                break;
+            case TopOut:
+                tran = Transition.TopIn;
+                break;
+            case LeftIn:
+                tran = Transition.LeftOut;
+                break;
+            case LeftOut:
+                tran = Transition.LeftIn;
+                break;
+            case BottomIn:
+                tran = Transition.BottomOut;
+                break;
+            case BottomOut:
+                tran = Transition.BottomIn;
+                break;
+            case RightIn:
+                tran = Transition.RightOut;
+                break;
+            case RightOut:
+                tran = Transition.RightIn;
+                break;
+            default:
+                tran = Transition.TopOut;
+                break;
+        }
+        return tran;
     }
 }

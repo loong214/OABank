@@ -59,7 +59,7 @@ public class PersonActivity extends BaseActivity {
     private void onClickEvent(View v){
         switch (v.getId()){
             case R.id.toolbar_btn_back:
-                finishWithTransition(Transition.LeftOut);
+                finish();
                 break;
             case R.id.person_ll_version:
                 checkVersion();

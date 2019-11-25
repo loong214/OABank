@@ -168,7 +168,7 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
     private void onClickEvent(View v){
         switch (v.getId()){
             case R.id.toolbar_btn_back:
-                finishWithTransition(Transition.RightOut);
+                finish();
                 break;
         }
     }

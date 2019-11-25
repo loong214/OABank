@@ -46,6 +46,8 @@
         <activity android:name=".ui.NetworkErrorActivity" />
         <activity android:name=".ui.PersonActivity" />
         <activity android:name=".ui.NotifyActivity" />
+        <activity android:name=".ui.AddProjectActivity" />
+        <activity android:name=".ui.ProjectSearchActivity" />
         <receiver android:name=".receiver.NetBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
