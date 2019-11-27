@@ -12,18 +12,27 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.adapter.NotifyListAdapter;
+import com.findingdata.oabank.adapter.ProjectListAdapter;
 import com.findingdata.oabank.base.BaseFragment;
 import com.findingdata.oabank.entity.BaseEntity;
+import com.findingdata.oabank.entity.EventBusMessage;
+import com.findingdata.oabank.entity.FilterValueEntity;
 import com.findingdata.oabank.entity.NotifyEntity;
 import com.findingdata.oabank.entity.NotifyListEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
+import com.findingdata.oabank.entity.ProjectEntity;
+import com.findingdata.oabank.entity.ProjectListEntity;
 import com.findingdata.oabank.utils.Config;
 import com.findingdata.oabank.utils.LogUtils;
+import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
 import com.findingdata.oabank.utils.http.XHttp;
 import com.findingdata.oabank.weidgt.RecyclerViewDivider;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
@@ -66,18 +75,25 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
 
     private int pageIndex = 1;
     private int pageSize = 10;
-    private List<NotifyEntity> dataList=new ArrayList<>();
-    private NotifyListAdapter adapter;
+    private List<ProjectEntity> dataList=new ArrayList<>();
+    private ProjectListAdapter adapter;
     private int loadStatus=2;//1为刷新，2为加载更多
 
     private Context context;
     private String listType;
+
+    private FilterValueEntity filterValue;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getActivity();
         listType = getArguments().getString(ARG);
-        LogUtils.d(listType);
+        //初始化项目过滤的值
+        filterValue=SharedPreferencesManage.getFilterValueEntity();
+        LogUtils.d(filterValue);
+        //注册监听
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -94,13 +110,14 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
         mrv.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //startActivity(new Intent(NotifyActivity.this, ProjectDetailsActivity.class).putExtra("project_id", dataList.get(position).getProject_id()));
-                Toast.makeText(context,dataList.get(position).getF_name(),Toast.LENGTH_SHORT).show();
+                Bundle bundle=new Bundle();
+                bundle.putString("project_id",dataList.get(position).getP_id());
+                startActivity(ProjectDetailActivity.class,bundle);
             }
         });
 
         //初始化adapter
-        adapter = new NotifyListAdapter(R.layout.item_notify_list, dataList);
+        adapter = new ProjectListAdapter(R.layout.item_notify_list, dataList);
         adapter.setOnLoadMoreListener(this,mrv);
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setLoadMoreView(new SimpleLoadMoreView());
@@ -114,19 +131,20 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
      */
     private void getData(){
         Map<String,String> param=new HashMap<>();
+        param.put("status",listType);
         param.put("pageIndex",pageIndex+"");
         param.put("pageSize",pageSize+"");
-        XHttp.Get(Config.BASE_URL + "api/v1/base/getAllFile", param, new MyCallBack<String>() {
+        XHttp.Get(Config.BASE_URL + "api/v1/project/getProjectList", param, new MyCallBack<String>() {
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
                 LogUtils.d(result);
-                BaseEntity<NotifyListEntity> entity= JsonParse.parse(result,NotifyListEntity.class);
+                BaseEntity<ProjectListEntity> entity= JsonParse.parse(result,ProjectListEntity.class);
                 if(entity.getCode()==200){
                     if(loadStatus==1){
                         dataList.clear();
                     }
-                    NotifyListEntity data=entity.getData();
+                    ProjectListEntity data=entity.getData();
                     dataList.addAll(data.getList());
                     adapter.notifyDataSetChanged();
                     if(loadStatus==1){
@@ -184,6 +202,20 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
         loadStatus=2;
         pageIndex++;
         getData();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void Event(EventBusMessage message){
+        if("ProjectFilter".equals(message.getMessage())){
+            filterValue = SharedPreferencesManage.getFilterValueEntity();
+            LogUtils.d(filterValue);
+        }
     }
 
 }

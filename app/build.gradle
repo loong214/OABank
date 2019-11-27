@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 def Release_Url = "\"http://oa.cszfp.net:5810/\""
-def Debug_Url = "\"http://192.168.2.102:3000/\""
-//def Debug_Url = "\"http://10.222.5.20:3000/\""
+//def Debug_Url = "\"http://192.168.2.102:3000/\""
+def Debug_Url = "\"http://10.222.5.20:3000/\""
 //def Debug_Url = "\"http://192.168.0.200:3000/\""
 
 android {

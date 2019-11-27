@@ -8,10 +8,15 @@ import android.widget.TextView;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
+import com.findingdata.oabank.entity.EventBusMessage;
+import com.findingdata.oabank.entity.FilterValueEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
 import com.findingdata.oabank.entity.Transition;
-import com.findingdata.oabank.utils.LogUtils;
+import com.findingdata.oabank.utils.SharedPreferencesManage;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -49,6 +54,8 @@ public class MainActivity extends BaseActivity {
     private TextView[] tabs = new TextView[4];
     private FragmentManager fragmentManager;
     private Fragment todo, doing, pause, stop;
+    private FilterValueEntity filterValue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +69,10 @@ public class MainActivity extends BaseActivity {
         initTabs();
         setTabSelection(0);
 
-
+        //注册监听
+        EventBus.getDefault().register(this);
+        filterValue=new FilterValueEntity("0","0","0");
+        SharedPreferencesManage.setFilterValueEntity(filterValue);
     }
     private void initTabs() {
         tabs[0] = tab_todo;
@@ -193,6 +203,19 @@ public class MainActivity extends BaseActivity {
         }
         if (stop != null) {
             transaction.hide(stop);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void Event(EventBusMessage message){
+        if("NavClose".equals(message.getMessage())){
+            drawerLayout.closeDrawers();
         }
     }
 }
