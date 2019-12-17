@@ -15,6 +15,7 @@ import com.findingdata.oabank.utils.ExitAppUtils;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.NetworkUtils;
 import com.findingdata.oabank.utils.StatusBarUtil;
+import com.findingdata.oabank.weidgt.ProgressDialogView;
 
 import org.xutils.x;
 
@@ -30,7 +31,7 @@ import static com.findingdata.oabank.FDApplication.activityTrans;
 public class BaseActivity extends AppCompatActivity implements NetBroadcastReceiver.NetEvent {
     public NetBroadcastReceiver netBroadcastReceiver;
     public static NetBroadcastReceiver.NetEvent event;
-
+    private ProgressDialogView progressDialogView = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +45,7 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
 
     //设置状态栏颜色
     protected void setStatusBar() {
-        StatusBarUtil.setStatusBarMode(this, true, R.color.white);
+        StatusBarUtil.setStatusBarMode(this, true, R.color.body_background);
     }
 
     //设置方向
@@ -68,6 +69,10 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(netBroadcastReceiver);
+        if (progressDialogView != null) {
+            progressDialogView.stopLoad();
+            progressDialogView = null;
+        }
         ExitAppUtils.getInstance().delActivity(this);
         if(isActivityTrans()){
             Class clazz=this.getClass();
@@ -221,5 +226,39 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
                 break;
         }
         return tran;
+    }
+    //启动加载框
+    protected void startProgressDialog() {
+        if (progressDialogView == null) {
+            progressDialogView = new ProgressDialogView();
+        }
+        progressDialogView.startLoad(this, "",false);
+    }
+    //启动加载框
+    protected void startProgressDialog(String msg) {
+        if (progressDialogView == null) {
+            progressDialogView = new ProgressDialogView();
+        }
+        progressDialogView.startLoad(this, msg,false);
+    }
+    //启动加载框
+    protected void startProgressDialog(boolean cancelable) {
+        if (progressDialogView == null) {
+            progressDialogView = new ProgressDialogView();
+        }
+        progressDialogView.startLoad(this, "",cancelable);
+    }
+    //启动加载框
+    protected void startProgressDialog(String msg,boolean cancelable) {
+        if (progressDialogView == null) {
+            progressDialogView = new ProgressDialogView();
+        }
+        progressDialogView.startLoad(this, msg,cancelable);
+    }
+    //关闭加载框
+    protected void stopProgressDialog() {
+        if (progressDialogView != null) {
+            progressDialogView.stopLoad();
+        }
     }
 }

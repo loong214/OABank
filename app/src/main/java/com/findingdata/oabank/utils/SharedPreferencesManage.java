@@ -2,6 +2,7 @@ package com.findingdata.oabank.utils;
 
 import com.findingdata.oabank.FDApplication;
 import com.findingdata.oabank.entity.FilterValueEntity;
+import com.findingdata.oabank.entity.UserInfo;
 
 /**
  * Created by Loong on 2019/11/20.
@@ -20,5 +21,13 @@ public class SharedPreferencesManage {
     }
     public static FilterValueEntity getFilterValueEntity(){
         return (FilterValueEntity) SharedPreferencesUtil.getInstance().getObject(FDApplication.getAppContext(),"fd","FilterValue");
+    }
+
+    public static void setUserInfo(UserInfo userInfo){
+        SharedPreferencesUtil.getInstance().saveObject(FDApplication.getAppContext(),"fd","userInfo",userInfo);
+    }
+
+    public static UserInfo getUserInfo(){
+        return (UserInfo) SharedPreferencesUtil.getInstance().getObject(FDApplication.getAppContext(),"fd","userInfo");
     }
 }

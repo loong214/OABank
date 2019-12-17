@@ -100,11 +100,11 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
                 super.onSuccess(result);
                 LogUtils.d(result);
                 BaseEntity<NotifyListEntity> entity= JsonParse.parse(result,NotifyListEntity.class);
-                if(entity.getCode()==200){
+                if(entity.isStatus()){
                     if(loadStatus==1){
                         dataList.clear();
                     }
-                    NotifyListEntity data=entity.getData();
+                    NotifyListEntity data=entity.getResult();
                     dataList.addAll(data.getList());
                     adapter.notifyDataSetChanged();
                     if(loadStatus==1){
@@ -125,7 +125,7 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
                         pageIndex--;
                         adapter.loadMoreFail();
                     }
-                    Toast.makeText(NotifyActivity.this,entity.getMsg(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NotifyActivity.this,entity.getMessage(),Toast.LENGTH_SHORT).show();
                 }
             }
 

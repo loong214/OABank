@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroud_color"
+    android:background="@color/body_background"
     android:orientation="vertical">
 
     <include layout="@layout/toolbar_layout" />
@@ -36,6 +36,6 @@
         android:layout_margin="60dp"
         android:background="@drawable/btn_solid_primary_shape"
         android:text="去设置"
-        android:textColor="@color/white" />
+        android:textColor="@color/text_white" />
 
 </LinearLayout>

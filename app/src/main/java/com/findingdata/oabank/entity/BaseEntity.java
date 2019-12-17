@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by Loong on 2019/11/21.
  * Version: 1.0
- * Describe:
+ * Describe: 通用实体，用于JSON解析
  */
 public class BaseEntity<T> implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -16,31 +16,31 @@ public class BaseEntity<T> implements Serializable {
      * msg : 上传附件成功
      */
 
-    private int code;
-    private T data;
-    private String msg;
+    private boolean Status;
+    private T Result;
+    private String Message;
 
-    public int getCode() {
-        return code;
+    public boolean isStatus() {
+        return Status;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setStatus(boolean status) {
+        Status = status;
     }
 
-    public T getData() {
-        return data;
+    public T getResult() {
+        return Result;
     }
 
-    public void setData(T data) {
-        this.data = data;
+    public void setResult(T result) {
+        Result = result;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getMessage() {
+        return Message;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setMessage(String message) {
+        Message = message;
     }
 }

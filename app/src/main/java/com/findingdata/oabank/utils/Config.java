@@ -9,4 +9,5 @@ import com.findingdata.oabank.BuildConfig;
 public class Config {
     //后台服务地址
     public static final String BASE_URL= BuildConfig.BASE_URL;
+    public static final String COOKIE_NAME="token";
 }

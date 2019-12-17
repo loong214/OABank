@@ -18,6 +18,7 @@ import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.Transition;
 import com.findingdata.oabank.utils.AtyTransitionUtil;
 import com.findingdata.oabank.utils.ExitAppUtils;
+import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.Utils;
 import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
@@ -69,6 +70,7 @@ public class PersonActivity extends BaseActivity {
                 logout_layer.startAnimation(alphaAnimation());
                 break;
             case R.id.person_ll_logout_layer_change:
+                SharedPreferencesManage.setToken("");
                 startActivity(new Intent(PersonActivity.this, LoginActivity.class));
                 ExitAppUtils.getInstance().exit();
                 break;

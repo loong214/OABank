@@ -10,6 +10,6 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_white"
         android:text="v-1.0.3"/>
 </RelativeLayout>

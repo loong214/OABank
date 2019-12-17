@@ -1,6 +1,7 @@
 package com.findingdata.oabank.base;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.findingdata.oabank.entity.Transition;
 import com.findingdata.oabank.utils.AtyTransitionUtil;
+import com.findingdata.oabank.weidgt.ProgressDialogView;
 
 import org.xutils.x;
 
@@ -21,8 +23,15 @@ import static com.findingdata.oabank.FDApplication.activityTrans;
  * Describe: Fragment基础类
  */
 public class BaseFragment extends Fragment {
+    private Context context;// 上下文
     private boolean injected = false;
+    private ProgressDialogView progressDialogView = null;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -136,4 +145,39 @@ public class BaseFragment extends Fragment {
         }
     }
 
+
+    //启动加载框
+    protected void startProgressDialog() {
+        if (progressDialogView == null) {
+            progressDialogView = new ProgressDialogView();
+        }
+        progressDialogView.startLoad(context, "",false);
+    }
+    //启动加载框
+    protected void startProgressDialog(String msg) {
+        if (progressDialogView == null) {
+            progressDialogView = new ProgressDialogView();
+        }
+        progressDialogView.startLoad(context, msg,false);
+    }
+    //启动加载框
+    protected void startProgressDialog(boolean cancelable) {
+        if (progressDialogView == null) {
+            progressDialogView = new ProgressDialogView();
+        }
+        progressDialogView.startLoad(context, "",cancelable);
+    }
+    //启动加载框
+    protected void startProgressDialog(String msg,boolean cancelable) {
+        if (progressDialogView == null) {
+            progressDialogView = new ProgressDialogView();
+        }
+        progressDialogView.startLoad(context, msg,cancelable);
+    }
+    //关闭加载框
+    protected void stopProgressDialog() {
+        if (progressDialogView != null) {
+            progressDialogView.stopLoad();
+        }
+    }
 }

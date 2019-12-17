@@ -3,17 +3,15 @@ package com.findingdata.oabank.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
+import com.findingdata.oabank.entity.UserInfo;
 import com.findingdata.oabank.utils.LogUtils;
-import com.findingdata.oabank.utils.NetworkUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
@@ -59,21 +57,21 @@ public class LoginActivity extends BaseActivity {
     }
     //登录
     private void login(){
+        startProgressDialog();
         Map<String,Object> params=new HashMap<>();
-        params.put("account",login_et_tel.getText().toString());
-        params.put("password",login_et_password.getText().toString());
-        XHttp.Post(BASE_URL+"api/v1/auth/login",params,new MyCallBack<String>(){
+        params.put("USER_NAME",login_et_tel.getText().toString());
+        params.put("PASSWORD",login_et_password.getText().toString());
+        XHttp.Post(BASE_URL+"/api/Home/Login",params,new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
                 LogUtils.d("result",result);
                 BaseEntity<String> entity= JsonParse.parse(result,String.class);
-                if(entity.getCode()==200){
-                    SharedPreferencesManage.setToken(entity.getData());
-                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                    finish();
+                if(entity.isStatus()){
+                    SharedPreferencesManage.setToken(entity.getResult());
+                    getUserInfo();
                 }else{
-                    Toast.makeText(LoginActivity.this,entity.getMsg(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,entity.getMessage(),Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -86,6 +84,40 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFinished() {
                 super.onFinished();
+                stopProgressDialog();
+            }
+        });
+    }
+
+    private void getUserInfo(){
+        startProgressDialog();
+        XHttp.Get(BASE_URL+"/api/Home/GetUserInfo",null,new MyCallBack<String>(){
+            @Override
+            public void onSuccess(String result) {
+                super.onSuccess(result);
+                LogUtils.d("result",result);
+                BaseEntity<UserInfo> entity= JsonParse.parse(result,UserInfo.class);
+                if(entity.isStatus()){
+                    SharedPreferencesManage.setUserInfo(entity.getResult());
+                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                    finish();
+                }else{
+                    Toast.makeText(LoginActivity.this,entity.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+
+                //startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                //finish();
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                super.onError(ex, isOnCallback);
+            }
+
+            @Override
+            public void onFinished() {
+                super.onFinished();
+                stopProgressDialog();
             }
         });
     }

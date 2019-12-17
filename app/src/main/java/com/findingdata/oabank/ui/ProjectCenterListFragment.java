@@ -1,6 +1,7 @@
 package com.findingdata.oabank.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -21,7 +22,9 @@ import com.findingdata.oabank.entity.NotifyEntity;
 import com.findingdata.oabank.entity.NotifyListEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
 import com.findingdata.oabank.entity.ProjectEntity;
+import com.findingdata.oabank.entity.ProjectList;
 import com.findingdata.oabank.entity.ProjectListEntity;
+import com.findingdata.oabank.entity.UserInfo;
 import com.findingdata.oabank.utils.Config;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
@@ -33,9 +36,11 @@ import com.findingdata.oabank.weidgt.RecyclerViewDivider;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.xutils.http.cookie.DbCookieStore;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,9 +132,49 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
     }
 
     /**
-     * 获取后台数据
+     * 获取项目列表
      */
     private void getData(){
+        startProgressDialog();
+        Map<String,Object> param=new HashMap<>();
+        param.put("customer_id",SharedPreferencesManage.getUserInfo().getCustomerId());
+        param.put("is_all_custmer",true);
+        param.put("query_item_list",new ArrayList<>());
+        param.put("page_num",pageIndex);
+        param.put("page_size",pageSize);
+        param.put("order_by","");
+
+        XHttp.Post(Config.BASE_URL + "/api/Project/ProjectList", param, new MyCallBack<String>() {
+            @Override
+            public void onSuccess(String result) {
+                super.onSuccess(result);
+                LogUtils.d("result",result);
+                BaseEntity<ProjectList> entity= JsonParse.parse(result,ProjectList.class);
+                if(entity.isStatus()){
+                    LogUtils.d("result",entity.getResult().getData().size()+"_");
+                }else{
+                    Toast.makeText(context,entity.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                super.onError(ex, isOnCallback);
+                Toast.makeText(context,ex.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFinished() {
+                super.onFinished();
+                stopProgressDialog();
+            }
+        });
+    }
+
+    /**
+     * 获取后台数据
+     */
+    private void getDataBak(){
         Map<String,String> param=new HashMap<>();
         param.put("status",listType);
         param.put("pageIndex",pageIndex+"");
@@ -140,11 +185,11 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
                 super.onSuccess(result);
                 LogUtils.d(result);
                 BaseEntity<ProjectListEntity> entity= JsonParse.parse(result,ProjectListEntity.class);
-                if(entity.getCode()==200){
+                if(entity.isStatus()){
                     if(loadStatus==1){
                         dataList.clear();
                     }
-                    ProjectListEntity data=entity.getData();
+                    ProjectListEntity data=entity.getResult();
                     dataList.addAll(data.getList());
                     adapter.notifyDataSetChanged();
                     if(loadStatus==1){
@@ -165,7 +210,7 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
                         pageIndex--;
                         adapter.loadMoreFail();
                     }
-                    Toast.makeText(context,entity.getMsg(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,entity.getMessage(),Toast.LENGTH_SHORT).show();
                 }
             }
 

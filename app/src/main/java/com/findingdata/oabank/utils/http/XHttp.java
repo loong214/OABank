@@ -1,11 +1,9 @@
 package com.findingdata.oabank.utils.http;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.text.TextUtils;
-import android.widget.Toast;
 
+import com.findingdata.oabank.utils.Config;
+import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
 
 import org.xutils.common.Callback;
@@ -27,9 +25,15 @@ public class XHttp {
     public static <T> Callback.Cancelable Get(String url, Map<String,String> map, Callback.CommonCallback<T> callback){
         RequestParams params=new RequestParams(url);
         String token= SharedPreferencesManage.getToken();
-        if(!TextUtils.isEmpty(token)){
-            params.addHeader("Authorization","bearer "+token);
-        }
+        StringBuilder sbCookie = new StringBuilder();
+        sbCookie.append(Config.COOKIE_NAME).append("=")
+                .append(token).append("; path=/; domain=")
+                .append(Config.BASE_URL);
+        params.addHeader("Cookie",sbCookie.toString());
+        LogUtils.d("Cookie",sbCookie);
+//        if(!TextUtils.isEmpty(token)){
+//            params.addHeader("Authorization","bearer "+token);
+//        }
         if(null!=map){
             for(Map.Entry<String, String> entry : map.entrySet()){
                 params.addQueryStringParameter(entry.getKey(), entry.getValue());
@@ -48,8 +52,16 @@ public class XHttp {
         RequestParams params = new RequestParams(url);
         String token= SharedPreferencesManage.getToken();
         if(!TextUtils.isEmpty(token)){
-            params.addHeader("Authorization","bearer "+token);
+            StringBuilder sbCookie = new StringBuilder();
+            sbCookie.append(Config.COOKIE_NAME).append("=")
+                    .append(token).append("; path=/; domain=")
+                    .append(Config.BASE_URL);
+            params.addHeader("Cookie",sbCookie.toString());
+            LogUtils.d("Cookie",sbCookie);
         }
+//        if(!TextUtils.isEmpty(token)){
+//            params.addHeader("Authorization","bearer "+token);
+//        }
         if (null != map) {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 params.addParameter(entry.getKey(), entry.getValue());
