@@ -15,8 +15,9 @@ import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
-import com.findingdata.oabank.entity.Transition;
-import com.findingdata.oabank.utils.AtyTransitionUtil;
+import com.findingdata.oabank.entity.LoginEntity;
+import com.findingdata.oabank.entity.TokenEntity;
+import com.findingdata.oabank.entity.UserInfo;
 import com.findingdata.oabank.utils.ExitAppUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.Utils;
@@ -47,20 +48,37 @@ public class PersonActivity extends BaseActivity {
     @ViewInject(R.id.person_ll_logout_layer)
     LinearLayout logout_layer;
 
+    @ViewInject(R.id.person_tv_customer)
+    private TextView person_tv_customer;
+    @ViewInject(R.id.person_tv_name)
+    private TextView person_tv_name;
+    @ViewInject(R.id.person_tv_email)
+    private TextView person_tv_email;
+    @ViewInject(R.id.person_tv_tel)
+    private TextView person_tv_tel;
+
     private ProgressDialog progressDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         toolbar_title.setText("个人中心");
         toolbar_btn_action.setVisibility(View.INVISIBLE);
+        UserInfo userInfo=SharedPreferencesManage.getUserInfo();
+        person_tv_customer.setText(userInfo.getCustomerName());
+        person_tv_name.setText(userInfo.getUserName());
+        person_tv_tel.setText(userInfo.getUserPhone().substring(0,3)+"****"+userInfo.getUserPhone().substring(7));
+        person_tv_email.setText(userInfo.getUserEmail());
     }
 
     @Event({R.id.toolbar_btn_back, R.id.person_ll_version,R.id.person_ll_logout,R.id.person_ll_logout_layer,R.id.person_ll_logout_layer_change,
-            R.id.person_ll_logout_out, R.id.person_ll_logout_cancel})
+            R.id.person_ll_logout_out, R.id.person_ll_logout_cancel,R.id.person_ll_modify_password})
     private void onClickEvent(View v){
         switch (v.getId()){
             case R.id.toolbar_btn_back:
                 finish();
+                break;
+            case R.id.person_ll_modify_password:
+                startActivity(ModifyPasswordActivity.class);
                 break;
             case R.id.person_ll_version:
                 checkVersion();
@@ -70,7 +88,10 @@ public class PersonActivity extends BaseActivity {
                 logout_layer.startAnimation(alphaAnimation());
                 break;
             case R.id.person_ll_logout_layer_change:
-                SharedPreferencesManage.setToken("");
+                SharedPreferencesManage.setLoginInfo(new LoginEntity("",""));
+                TokenEntity tokenEntity=SharedPreferencesManage.getToken();
+                tokenEntity.setExpireTime(-1);
+                SharedPreferencesManage.setToken(tokenEntity);
                 startActivity(new Intent(PersonActivity.this, LoginActivity.class));
                 ExitAppUtils.getInstance().exit();
                 break;

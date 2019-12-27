@@ -4,14 +4,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
-import com.findingdata.oabank.entity.Transition;
-import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.Utils;
 import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
@@ -24,6 +21,8 @@ import org.xutils.view.annotation.ViewInject;
 import java.io.File;
 
 import androidx.annotation.Nullable;
+
+import static com.findingdata.oabank.base.BaseHandler.CHECK_LOGIN;
 
 /**
  * Created by zengx on 2019/11/17.
@@ -56,7 +55,7 @@ public class LaunchActivity extends BaseActivity {
                         //没有更新是回调此方法
                         Log.d("pgyer", "there is no new version");
                         finish();
-                        checkLogin();
+                        checkAutoLogin();
                     }
                     @Override
                     public void onUpdateAvailable(final AppBean appBean) {
@@ -82,7 +81,7 @@ public class LaunchActivity extends BaseActivity {
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
                                             finish();
-                                            checkLogin();
+                                            checkAutoLogin();
                                         }
                                     }).show();
                         }else{
@@ -107,7 +106,7 @@ public class LaunchActivity extends BaseActivity {
                         //更新拒绝（应用被下架，过期，不在安装有效期，下载次数用尽）以及无网络情况会调用此接口
                         Log.e("pgyer", "check update failed ", e);
                         finish();
-                        checkLogin();
+                        checkAutoLogin();
                     }
                 })
                 .setDownloadFileListener(new DownloadFileListener() {
@@ -116,7 +115,7 @@ public class LaunchActivity extends BaseActivity {
                         //下载失败
                         Log.e("pgyer", "download apk failed");
                         finish();
-                        checkLogin();
+                        checkAutoLogin();
                     }
 
                     @Override
@@ -157,14 +156,7 @@ public class LaunchActivity extends BaseActivity {
     /**
      * 检查是否自动登录
      */
-    private void checkLogin(){
-//        String token="";
-        String token= SharedPreferencesManage.getToken();
-        if(!TextUtils.isEmpty(token)){
-            startActivity(MainActivity.class, Transition.RightIn);
-        }else{
-            startActivity(LoginActivity.class, Transition.RightIn);
-        }
-
+    private void checkAutoLogin(){
+        handler.sendEmptyMessage(CHECK_LOGIN);
     }
 }

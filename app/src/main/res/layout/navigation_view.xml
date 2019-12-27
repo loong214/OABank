@@ -5,44 +5,45 @@
     android:background="@color/body_background"
     android:orientation="vertical">
     <LinearLayout
+        android:id="@+id/nav_ll_filter_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="20dp"
         android:padding="20dp"
         android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="贷款类型："
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/nav_rlv_loan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="抵押物类型："
-            android:layout_marginTop="20dp"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/nav_rlv_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="抵押物区域："
-            android:layout_marginTop="20dp"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/nav_rlv_city"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="贷款类型："-->
+<!--            android:textColor="@color/text_primary"-->
+<!--            android:textSize="16sp"/>-->
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/nav_rlv_loan"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"/>-->
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="抵押物类型："-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textColor="@color/text_primary"-->
+<!--            android:textSize="16sp"/>-->
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/nav_rlv_type"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"/>-->
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="抵押物区域："-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textColor="@color/text_primary"-->
+<!--            android:textSize="16sp"/>-->
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/nav_rlv_city"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"/>-->
 
     </LinearLayout>
     <LinearLayout

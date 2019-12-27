@@ -21,6 +21,9 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -54,7 +57,7 @@ public class MainActivity extends BaseActivity {
     private TextView[] tabs = new TextView[4];
     private FragmentManager fragmentManager;
     private Fragment todo, doing, pause, stop;
-    private FilterValueEntity filterValue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +74,6 @@ public class MainActivity extends BaseActivity {
 
         //注册监听
         EventBus.getDefault().register(this);
-        filterValue=new FilterValueEntity("0","0","0");
-        SharedPreferencesManage.setFilterValueEntity(filterValue);
     }
     private void initTabs() {
         tabs[0] = tab_todo;

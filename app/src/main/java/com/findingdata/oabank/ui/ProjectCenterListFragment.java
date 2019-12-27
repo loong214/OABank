@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,10 +15,12 @@ import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.adapter.NotifyListAdapter;
 import com.findingdata.oabank.adapter.ProjectListAdapter;
+import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.base.BaseFragment;
 import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.EventBusMessage;
 import com.findingdata.oabank.entity.FilterValueEntity;
+import com.findingdata.oabank.entity.LoginEntity;
 import com.findingdata.oabank.entity.NotifyEntity;
 import com.findingdata.oabank.entity.NotifyListEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
@@ -28,8 +31,10 @@ import com.findingdata.oabank.entity.UserInfo;
 import com.findingdata.oabank.utils.Config;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
+import com.findingdata.oabank.utils.http.HttpMethod;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
+import com.findingdata.oabank.utils.http.RequestParam;
 import com.findingdata.oabank.utils.http.XHttp;
 import com.findingdata.oabank.weidgt.RecyclerViewDivider;
 
@@ -51,6 +56,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
+import static com.findingdata.oabank.utils.Config.BASE_URL;
 
 /**
  * Created by Loong on 2019/11/20.
@@ -87,8 +95,7 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
     private Context context;
     private String listType;
 
-    private FilterValueEntity filterValue;
-
+    private List<FilterValueEntity> filterValue;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,7 +151,9 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
         param.put("page_size",pageSize);
         param.put("order_by","");
 
-        XHttp.Post(Config.BASE_URL + "/api/Project/ProjectList", param, new MyCallBack<String>() {
+        Message message=new Message();
+        message.what=HTTP_REQUEST;
+        message.obj=new RequestParam<>(BASE_URL+"/api/Project/ProjectList", HttpMethod.Post,null,param,new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
@@ -169,6 +178,7 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
                 stopProgressDialog();
             }
         });
+        handler.sendMessage(message);
     }
 
     /**

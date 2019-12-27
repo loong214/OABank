@@ -1,10 +1,9 @@
 package com.findingdata.oabank.utils.http;
 
-import android.text.TextUtils;
 
 import com.findingdata.oabank.utils.Config;
 import com.findingdata.oabank.utils.LogUtils;
-import com.findingdata.oabank.utils.SharedPreferencesManage;
+import com.findingdata.oabank.utils.TokenUtils;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -12,72 +11,71 @@ import org.xutils.x;
 
 import java.util.Map;
 
+import static com.findingdata.oabank.utils.Config.BASE_URL;
+
 /**
  * Created by Loong on 2019/11/20.
  * Version: 1.0
- * Describe:
+ * Describe: 通用请求封装
  */
 public class XHttp {
     /**
      * 发送get请求
      * @param <T>
      */
-    public static <T> Callback.Cancelable Get(String url, Map<String,String> map, Callback.CommonCallback<T> callback){
+    public static <T> Callback.Cancelable Get(final String url, final Map<String,String> map, final Callback.CommonCallback<T> callback){
         RequestParams params=new RequestParams(url);
-        String token= SharedPreferencesManage.getToken();
         StringBuilder sbCookie = new StringBuilder();
         sbCookie.append(Config.COOKIE_NAME).append("=")
-                .append(token).append("; path=/; domain=")
+                .append(TokenUtils.getToken()).append("; path=/; domain=")
                 .append(Config.BASE_URL);
         params.addHeader("Cookie",sbCookie.toString());
         LogUtils.d("Cookie",sbCookie);
-//        if(!TextUtils.isEmpty(token)){
-//            params.addHeader("Authorization","bearer "+token);
-//        }
         if(null!=map){
             for(Map.Entry<String, String> entry : map.entrySet()){
                 params.addQueryStringParameter(entry.getKey(), entry.getValue());
             }
         }
-        Callback.Cancelable cancelable = x.http().get(params, callback);
-        return cancelable;
+        return x.http().get(params, callback);
     }
 
     /**
-     * 发送post请求
+     * 发送异步post请求
      *
      * @param <T>
      */
-    public static <T> Callback.Cancelable Post(String url, Map<String, Object> map, Callback.CommonCallback<T> callback) {
-        RequestParams params = new RequestParams(url);
-        String token= SharedPreferencesManage.getToken();
-        if(!TextUtils.isEmpty(token)){
+    public static <T> Callback.Cancelable Post(final String url, final Map<String, Object> map, final Callback.CommonCallback<T> callback) {
+        if(url.equals(BASE_URL+"/api/Home/Login")){
+            RequestParams params = new RequestParams(url);
+            if (null != map) {
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    params.addParameter(entry.getKey(), entry.getValue());
+                }
+            }
+            return x.http().post(params, callback);
+        }else{
+            RequestParams params = new RequestParams(url);
             StringBuilder sbCookie = new StringBuilder();
             sbCookie.append(Config.COOKIE_NAME).append("=")
-                    .append(token).append("; path=/; domain=")
+                    .append(TokenUtils.getToken()).append("; path=/; domain=")
                     .append(Config.BASE_URL);
             params.addHeader("Cookie",sbCookie.toString());
             LogUtils.d("Cookie",sbCookie);
-        }
-//        if(!TextUtils.isEmpty(token)){
-//            params.addHeader("Authorization","bearer "+token);
-//        }
-        if (null != map) {
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                params.addParameter(entry.getKey(), entry.getValue());
+            if (null != map) {
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    params.addParameter(entry.getKey(), entry.getValue());
+                }
             }
+            return x.http().post(params, callback);
         }
-        Callback.Cancelable cancelable = x.http().post(params, callback);
-        return cancelable;
     }
-
 
     /**
      * 上传文件
      *
      * @param <T>
      */
-    public static <T> Callback.Cancelable UpLoadFile(String url, Map<String, Object> map, Callback.CommonCallback<T> callback) {
+    public static <T> Callback.Cancelable UpLoadFile(final String url, final Map<String, Object> map, final Callback.CommonCallback<T> callback) {
         RequestParams params = new RequestParams(url);
         if (null != map) {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -85,8 +83,7 @@ public class XHttp {
             }
         }
         params.setMultipart(true);
-        Callback.Cancelable cancelable = x.http().post(params, callback);
-        return cancelable;
+        return x.http().post(params, callback);
     }
 
 
@@ -95,13 +92,12 @@ public class XHttp {
      *
      * @param <T>
      */
-    public static <T> Callback.Cancelable DownLoadFile(String url, String filepath, Callback.ProgressCallback<T> callback) {
+    public static <T> Callback.Cancelable DownLoadFile(final String url, final String filepath, final Callback.ProgressCallback<T> callback) {
         RequestParams params = new RequestParams(url);
         //设置断点续传
         params.setAutoResume(true);
         params.setSaveFilePath(filepath);
-        Callback.Cancelable cancelable = x.http().get(params, callback);
-        return cancelable;
+        return x.http().get(params, callback);
     }
 
 }

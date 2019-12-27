@@ -17,7 +17,11 @@ import com.findingdata.oabank.utils.NetworkUtils;
 import com.findingdata.oabank.utils.StatusBarUtil;
 import com.findingdata.oabank.weidgt.ProgressDialogView;
 
+import org.xutils.common.Callback;
 import org.xutils.x;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +36,10 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
     public NetBroadcastReceiver netBroadcastReceiver;
     public static NetBroadcastReceiver.NetEvent event;
     private ProgressDialogView progressDialogView = null;
+
+    private static List<Callback.Cancelable> taskList;
+
+    protected BaseHandler handler;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +49,8 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
         setStatusBar();
         setOrientation();
         initReceiver();
+        taskList=new ArrayList<>();
+        handler=new BaseHandler(this,taskList);
     }
 
     //设置状态栏颜色
@@ -72,6 +82,10 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
         if (progressDialogView != null) {
             progressDialogView.stopLoad();
             progressDialogView = null;
+        }
+        for (int i = 0; i < taskList.size(); i++) {
+            if(!taskList.get(i).isCancelled())
+                taskList.get(i).cancel();
         }
         ExitAppUtils.getInstance().delActivity(this);
         if(isActivityTrans()){
@@ -261,4 +275,6 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
             progressDialogView.stopLoad();
         }
     }
+
+
 }

@@ -2,7 +2,11 @@ package com.findingdata.oabank.utils;
 
 import com.findingdata.oabank.FDApplication;
 import com.findingdata.oabank.entity.FilterValueEntity;
+import com.findingdata.oabank.entity.LoginEntity;
+import com.findingdata.oabank.entity.TokenEntity;
 import com.findingdata.oabank.entity.UserInfo;
+
+import java.util.List;
 
 /**
  * Created by Loong on 2019/11/20.
@@ -10,17 +14,27 @@ import com.findingdata.oabank.entity.UserInfo;
  * Describe: SharedPreferences管理类
  */
 public class SharedPreferencesManage {
-    public static void setToken(String token){
-        SharedPreferencesUtil.getInstance().saveStringValue(FDApplication.getAppContext(),"fd","Token",token);
+    public static void setLoginInfo(LoginEntity loginInfo){
+        SharedPreferencesUtil.getInstance().saveObject(FDApplication.getAppContext(),"fd","loginInfo",loginInfo);
     }
-    public static String getToken(){
-        return SharedPreferencesUtil.getInstance().getStringValue(FDApplication.getAppContext(),"fd","Token");
+
+    public static LoginEntity getLoginInfo(){
+        return (LoginEntity) SharedPreferencesUtil.getInstance().getObject(FDApplication.getAppContext(),"fd","loginInfo");
     }
-    public static void setFilterValueEntity(FilterValueEntity filterValueEntity){
-        SharedPreferencesUtil.getInstance().saveObject(FDApplication.getAppContext(),"fd","FilterValue",filterValueEntity);
+
+    public static void setToken(TokenEntity token){
+        SharedPreferencesUtil.getInstance().saveObject(FDApplication.getAppContext(),"fd","Token",token);
     }
-    public static FilterValueEntity getFilterValueEntity(){
-        return (FilterValueEntity) SharedPreferencesUtil.getInstance().getObject(FDApplication.getAppContext(),"fd","FilterValue");
+    public static TokenEntity getToken(){
+        return (TokenEntity) SharedPreferencesUtil.getInstance().getObject(FDApplication.getAppContext(),"fd","Token");
+    }
+
+
+    public static void setFilterValueEntity(List<FilterValueEntity> list){
+        SharedPreferencesUtil.getInstance().saveObject(FDApplication.getAppContext(),"fd","FilterValue",list);
+    }
+    public static List<FilterValueEntity> getFilterValueEntity(){
+        return (List<FilterValueEntity>) SharedPreferencesUtil.getInstance().getObject(FDApplication.getAppContext(),"fd","FilterValue");
     }
 
     public static void setUserInfo(UserInfo userInfo){

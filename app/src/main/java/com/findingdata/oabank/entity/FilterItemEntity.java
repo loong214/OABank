@@ -3,22 +3,28 @@ package com.findingdata.oabank.entity;
 import java.io.Serializable;
 
 /**
- * Created by Loong on 2019/11/26.
+ * Created by Loong on 2019/12/23.
  * Version: 1.0
- * Describe: 项目过滤选择项的值
+ * Describe: 项目过滤项实体
  */
-public class FilterValueEntity implements Serializable {
+public class FilterItemEntity implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    /**
+     * key :
+     * value : 不限
+     */
 
     private String key;
     private String value;
+    private boolean check;
 
-    public FilterValueEntity() {
+    public boolean isCheck() {
+        return check;
     }
 
-    public FilterValueEntity(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public void setCheck(boolean check) {
+        this.check = check;
     }
 
     public String getKey() {
