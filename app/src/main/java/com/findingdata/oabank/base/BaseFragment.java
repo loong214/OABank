@@ -1,33 +1,20 @@
 package com.findingdata.oabank.base;
 
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.findingdata.oabank.entity.Transition;
-import com.findingdata.oabank.ui.LoginActivity;
-import com.findingdata.oabank.ui.MainActivity;
 import com.findingdata.oabank.utils.AtyTransitionUtil;
-import com.findingdata.oabank.utils.ExitAppUtils;
-import com.findingdata.oabank.utils.TokenUtils;
-import com.findingdata.oabank.utils.http.RequestParam;
-import com.findingdata.oabank.utils.http.XHttp;
 import com.findingdata.oabank.weidgt.ProgressDialogView;
 
 import org.xutils.common.Callback;
-import org.xutils.common.util.LogUtil;
 import org.xutils.x;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +32,7 @@ public class BaseFragment extends Fragment {
     private boolean injected = false;
     private ProgressDialogView progressDialogView = null;
     private static List<Callback.Cancelable> taskList;
-    protected BaseHandler handler;
+    protected static BaseHandler handler;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

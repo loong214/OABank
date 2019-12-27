@@ -39,7 +39,7 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
 
     private static List<Callback.Cancelable> taskList;
 
-    protected BaseHandler handler;
+    protected static BaseHandler handler;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

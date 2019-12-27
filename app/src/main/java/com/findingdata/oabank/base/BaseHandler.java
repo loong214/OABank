@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by Loong on 2019/12/27.
  * Version: 1.0
- * Describe:
+ * Describe: Handler基类
  */
 public class BaseHandler extends Handler {
     public final static int HTTP_REQUEST = 0x001;
@@ -31,7 +31,7 @@ public class BaseHandler extends Handler {
 
     public BaseHandler(Activity activity, List<org.xutils.common.Callback.Cancelable> taskList) {
         mActivity = new WeakReference<>(activity);
-        taskList = taskList;
+        this.taskList = taskList;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BaseHandler extends Handler {
                                         }
                                     }).show();
                 }
-            }else if(msg.what==0){
+            }else if(msg.what==CHECK_LOGIN){
                 boolean flag =true;
                 if(!TokenUtils.isTokenValid()){
                     if(TokenUtils.isLoginInfoExist()){
