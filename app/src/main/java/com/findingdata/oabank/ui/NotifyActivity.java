@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -15,7 +14,6 @@ import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.NotifyEntity;
 import com.findingdata.oabank.entity.NotifyListEntity;
-import com.findingdata.oabank.entity.Transition;
 import com.findingdata.oabank.utils.Config;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.http.JsonParse;
@@ -73,7 +71,7 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //startActivity(new Intent(NotifyActivity.this, ProjectDetailsActivity.class).putExtra("project_id", dataList.get(position).getProject_id()));
-                Toast.makeText(NotifyActivity.this,dataList.get(position).getF_name(),Toast.LENGTH_SHORT).show();
+                showToast(dataList.get(position).getF_name());
             }
         });
 
@@ -125,7 +123,7 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
                         pageIndex--;
                         adapter.loadMoreFail();
                     }
-                    Toast.makeText(NotifyActivity.this,entity.getMessage(),Toast.LENGTH_SHORT).show();
+                    showToast(entity.getMessage());
                 }
             }
 
@@ -139,7 +137,7 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
                     pageIndex--;
                     adapter.loadMoreFail();
                 }
-                Toast.makeText(NotifyActivity.this,ex.getMessage(),Toast.LENGTH_SHORT).show();
+                showToast(ex.getMessage());
             }
 
             @Override

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.findingdata.oabank.entity.Transition;
 import com.findingdata.oabank.utils.AtyTransitionUtil;
@@ -201,5 +202,8 @@ public class BaseFragment extends Fragment {
             progressDialogView.stopLoad();
         }
     }
-
+    //显示Toast
+    protected void showToast(String content){
+        Toast.makeText(context,content,Toast.LENGTH_SHORT).show();
+    }
 }

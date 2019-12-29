@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
@@ -77,14 +76,14 @@ public class LoginActivity extends BaseActivity {
                     SharedPreferencesManage.setToken(new TokenEntity(entity.getResult(),new Date().getTime()+10*60*1000));
                     getUserInfo();
                 }else{
-                    Toast.makeText(LoginActivity.this,entity.getMessage(),Toast.LENGTH_SHORT).show();
+                    showToast(entity.getMessage());
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 super.onError(ex, isOnCallback);
-                Toast.makeText(LoginActivity.this,ex.getMessage(),Toast.LENGTH_LONG).show();
+                showToast(ex.getMessage());
             }
 
             @Override
@@ -94,12 +93,13 @@ public class LoginActivity extends BaseActivity {
             }
         });
     }
-
+    //获取当前用户信息并缓存
     private void getUserInfo(){
         startProgressDialog();
         Message message=new Message();
         message.what=HTTP_REQUEST;
-        message.obj=new RequestParam<>(BASE_URL+"/api/Home/GetUserInfo", HttpMethod.Get,null,null,new MyCallBack<String>(){
+        Bundle bundle=new Bundle();
+        RequestParam requestParam=new RequestParam<>(BASE_URL+"/api/Home/GetUserInfo", HttpMethod.Get,null,null,new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
@@ -110,14 +110,14 @@ public class LoginActivity extends BaseActivity {
                     startActivity(new Intent(LoginActivity.this,MainActivity.class));
                     finish();
                 }else{
-                    Toast.makeText(LoginActivity.this,entity.getMessage(),Toast.LENGTH_SHORT).show();
+                    showToast(entity.getMessage());
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 super.onError(ex, isOnCallback);
-                Toast.makeText(LoginActivity.this,ex.getMessage(),Toast.LENGTH_LONG).show();
+                showToast(ex.getMessage());
             }
 
             @Override
@@ -126,6 +126,8 @@ public class LoginActivity extends BaseActivity {
                 stopProgressDialog();
             }
         });
+        bundle.putSerializable("request",requestParam);
+        message.setData(bundle);
         handler.sendMessage(message);
     }
 }

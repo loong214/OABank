@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.entity.Transition;
@@ -104,10 +105,7 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
      * @param clazz
      */
     public void startActivity(Class clazz){
-        Transition transition=Transition.RightIn;
-        activityTrans.put(clazz,transition);
-        startActivity(new Intent(this, clazz));
-        executeTransition(transition);
+        startActivity(clazz,Transition.RightIn);
     }
 
     /**
@@ -120,6 +118,16 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
         startActivity(new Intent(this, clazz));
         executeTransition(transition);
     }
+
+    /**
+     * 启动新的Activity
+     * @param clazz
+     * @param bundle
+     */
+    public void startActivity(Class clazz, Bundle bundle){
+        startActivity(clazz,bundle,Transition.RightIn);
+    }
+
 
     /**
      * 启动新的Activity
@@ -209,7 +217,7 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
     }
     //获取反向的Trans
     private Transition getReverse(Transition transition){
-        Transition tran;
+        Transition tran = Transition.TopOut;
         switch (transition){
             case TopIn:
                 tran = Transition.TopOut;
@@ -234,9 +242,6 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
                 break;
             case RightOut:
                 tran = Transition.RightIn;
-                break;
-            default:
-                tran = Transition.TopOut;
                 break;
         }
         return tran;
@@ -275,6 +280,8 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
             progressDialogView.stopLoad();
         }
     }
-
-
+    //显示Toast
+    protected void showToast(String content){
+        Toast.makeText(this,content,Toast.LENGTH_SHORT).show();
+    }
 }

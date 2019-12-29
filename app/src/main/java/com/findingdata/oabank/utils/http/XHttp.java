@@ -4,8 +4,10 @@ package com.findingdata.oabank.utils.http;
 import com.findingdata.oabank.utils.Config;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.TokenUtils;
+import com.google.gson.Gson;
 
 import org.xutils.common.Callback;
+import org.xutils.common.util.LogUtil;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -23,7 +25,8 @@ public class XHttp {
      * 发送get请求
      * @param <T>
      */
-    public static <T> Callback.Cancelable Get(final String url, final Map<String,String> map, final Callback.CommonCallback<T> callback){
+    public static <T> Callback.Cancelable Get(String url, Map<String,String> map, Callback.CommonCallback<T> callback){
+        LogUtil.d(url);
         RequestParams params=new RequestParams(url);
         StringBuilder sbCookie = new StringBuilder();
         sbCookie.append(Config.COOKIE_NAME).append("=")
@@ -44,30 +47,48 @@ public class XHttp {
      *
      * @param <T>
      */
-    public static <T> Callback.Cancelable Post(final String url, final Map<String, Object> map, final Callback.CommonCallback<T> callback) {
-        if(url.equals(BASE_URL+"/api/Home/Login")){
-            RequestParams params = new RequestParams(url);
-            if (null != map) {
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    params.addParameter(entry.getKey(), entry.getValue());
-                }
-            }
-            return x.http().post(params, callback);
-        }else{
-            RequestParams params = new RequestParams(url);
+    public static <T> Callback.Cancelable Post(String url, Map<String, Object> map, Callback.CommonCallback<T> callback) {
+        LogUtil.d(url);
+        RequestParams params = new RequestParams(url);
+        if(!url.equals(BASE_URL+"/api/Home/Login")){
             StringBuilder sbCookie = new StringBuilder();
             sbCookie.append(Config.COOKIE_NAME).append("=")
                     .append(TokenUtils.getToken()).append("; path=/; domain=")
                     .append(Config.BASE_URL);
             params.addHeader("Cookie",sbCookie.toString());
             LogUtils.d("Cookie",sbCookie);
-            if (null != map) {
-                for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    params.addParameter(entry.getKey(), entry.getValue());
-                }
-            }
-            return x.http().post(params, callback);
         }
+        if (null != map) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                params.addParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return x.http().post(params, callback);
+    }
+
+    /**
+     * 发送异步post请求
+     *
+     * @param <T>
+     */
+    public static <T> Callback.Cancelable PostJson(String url, Map<String, Object> map, Callback.CommonCallback<T> callback) {
+        LogUtil.d(url);
+        RequestParams params = new RequestParams(url);
+        if(!url.equals(BASE_URL+"/api/Home/Login")){
+            StringBuilder sbCookie = new StringBuilder();
+            sbCookie.append(Config.COOKIE_NAME).append("=")
+                    .append(TokenUtils.getToken()).append("; path=/; domain=")
+                    .append(Config.BASE_URL);
+            params.addHeader("Cookie",sbCookie.toString());
+            LogUtils.d("Cookie",sbCookie);
+        }
+        if (null != map) {
+            Gson gson=new Gson();
+            params.setAsJsonContent(true);
+            params.setBodyContent(gson.toJson(map));
+
+        }
+        return x.http().post(params, callback);
     }
 
     /**
@@ -75,7 +96,7 @@ public class XHttp {
      *
      * @param <T>
      */
-    public static <T> Callback.Cancelable UpLoadFile(final String url, final Map<String, Object> map, final Callback.CommonCallback<T> callback) {
+    public static <T> Callback.Cancelable UpLoadFile(String url, Map<String, Object> map, Callback.CommonCallback<T> callback) {
         RequestParams params = new RequestParams(url);
         if (null != map) {
             for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -92,7 +113,7 @@ public class XHttp {
      *
      * @param <T>
      */
-    public static <T> Callback.Cancelable DownLoadFile(final String url, final String filepath, final Callback.ProgressCallback<T> callback) {
+    public static <T> Callback.Cancelable DownLoadFile(String url, String filepath, Callback.ProgressCallback<T> callback) {
         RequestParams params = new RequestParams(url);
         //设置断点续传
         params.setAutoResume(true);

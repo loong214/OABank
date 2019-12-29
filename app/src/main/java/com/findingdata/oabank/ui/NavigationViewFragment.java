@@ -6,7 +6,6 @@ import android.os.Message;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -81,7 +80,8 @@ public class NavigationViewFragment extends BaseFragment {
         map.put("RESOURCEID", "9001001");
         Message message=new Message();
         message.what=HTTP_REQUEST;
-        message.obj=new RequestParam<>(BASE_URL+"/api/Project/GetQueryItems", HttpMethod.Get,map,null,new MyCallBack<String>(){
+        Bundle bundle=new Bundle();
+        bundle.putSerializable("request",new RequestParam<>(BASE_URL+"/api/Project/GetQueryItems", HttpMethod.Get,map,null,new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
@@ -111,9 +111,10 @@ public class NavigationViewFragment extends BaseFragment {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 super.onError(ex, isOnCallback);
-                Toast.makeText(context,ex.getMessage(),Toast.LENGTH_SHORT).show();
+                showToast(ex.getMessage());
             }
-        });
+        }));
+        message.setData(bundle);
         handler.sendMessage(message);
     }
     //初始化视图
@@ -220,9 +221,5 @@ public class NavigationViewFragment extends BaseFragment {
                 EventBus.getDefault().post(new EventBusMessage<>("ProjectFilter"));
                 break;
         }
-    }
-
-    private void showToast(String content){
-        Toast.makeText(context,content,Toast.LENGTH_SHORT).show();
     }
 }

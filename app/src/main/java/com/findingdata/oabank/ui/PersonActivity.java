@@ -11,7 +11,6 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
@@ -128,7 +127,7 @@ public class PersonActivity extends BaseActivity {
                     public void onNoUpdateAvailable() {
                         //没有更新是回调此方法
                         Log.d("pgyer", "there is no new version");
-                        Toast.makeText(PersonActivity.this,"已经是最新版本",Toast.LENGTH_SHORT).show();
+                        showToast("已经是最新版本");
                     }
 
                     @Override
@@ -179,7 +178,7 @@ public class PersonActivity extends BaseActivity {
                         //更新检测失败回调
                         //更新拒绝（应用被下架，过期，不在安装有效期，下载次数用尽）以及无网络情况会调用此接口
                         Log.e("pgyer", "check update failed ", e);
-                        Toast.makeText(PersonActivity.this,"检查最新版异常",Toast.LENGTH_SHORT).show();
+                        showToast("检查最新版异常");
                     }
                 })
                 .setDownloadFileListener(new DownloadFileListener() {

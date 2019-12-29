@@ -1,51 +1,38 @@
 package com.findingdata.oabank.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
 import com.findingdata.oabank.R;
-import com.findingdata.oabank.adapter.NotifyListAdapter;
 import com.findingdata.oabank.adapter.ProjectListAdapter;
-import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.base.BaseFragment;
 import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.EventBusMessage;
 import com.findingdata.oabank.entity.FilterValueEntity;
-import com.findingdata.oabank.entity.LoginEntity;
-import com.findingdata.oabank.entity.NotifyEntity;
-import com.findingdata.oabank.entity.NotifyListEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
-import com.findingdata.oabank.entity.ProjectEntity;
+import com.findingdata.oabank.entity.ProjectInfo;
 import com.findingdata.oabank.entity.ProjectList;
-import com.findingdata.oabank.entity.ProjectListEntity;
-import com.findingdata.oabank.entity.UserInfo;
-import com.findingdata.oabank.utils.Config;
+import com.findingdata.oabank.entity.QueryItem;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.http.HttpMethod;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
 import com.findingdata.oabank.utils.http.RequestParam;
-import com.findingdata.oabank.utils.http.XHttp;
 import com.findingdata.oabank.weidgt.RecyclerViewDivider;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.xutils.http.cookie.DbCookieStore;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
-import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +62,7 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
     public static Fragment newInstance(ProjectCenterListType type) {
         ProjectCenterListFragment fragment = new ProjectCenterListFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(ARG, type.getType());
+        bundle.putInt(ARG, type.getType());
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -87,23 +74,22 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
     private RecyclerView mrv;
 
     private int pageIndex = 1;
-    private int pageSize = 10;
-    private List<ProjectEntity> dataList=new ArrayList<>();
+    private int pageSize = 5;
+    private List<ProjectInfo> dataList=new ArrayList<>();
     private ProjectListAdapter adapter;
     private int loadStatus=2;//1为刷新，2为加载更多
 
     private Context context;
-    private String listType;
+    private int listType;
 
     private List<FilterValueEntity> filterValue;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getActivity();
-        listType = getArguments().getString(ARG);
+        listType = getArguments().getInt(ARG);
         //初始化项目过滤的值
         filterValue=SharedPreferencesManage.getFilterValueEntity();
-        LogUtils.d(filterValue);
         //注册监听
         EventBus.getDefault().register(this);
     }
@@ -123,13 +109,13 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Bundle bundle=new Bundle();
-                bundle.putString("project_id",dataList.get(position).getP_id());
+                bundle.putInt("project_id",dataList.get(position).getPROJECT_ID());
                 startActivity(ProjectDetailActivity.class,bundle);
             }
         });
 
         //初始化adapter
-        adapter = new ProjectListAdapter(R.layout.item_notify_list, dataList);
+        adapter = new ProjectListAdapter(R.layout.item_project_list, dataList);
         adapter.setOnLoadMoreListener(this,mrv);
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         adapter.setLoadMoreView(new SimpleLoadMoreView());
@@ -144,69 +130,34 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
     private void getData(){
         startProgressDialog();
         Map<String,Object> param=new HashMap<>();
-        param.put("customer_id",SharedPreferencesManage.getUserInfo().getCustomerId());
-        param.put("is_all_custmer",true);
-        param.put("query_item_list",new ArrayList<>());
         param.put("page_num",pageIndex);
         param.put("page_size",pageSize);
-        param.put("order_by","");
-
+        List<QueryItem> queryItemList=new ArrayList<>();
+        List<Integer> value=new ArrayList<>();
+        value.add(listType);
+        queryItemList.add(new QueryItem("1026",new ArrayList<String>()));
+        queryItemList.add(new QueryItem("1012",value));
+        param.put("query_item_list",queryItemList);
         Message message=new Message();
         message.what=HTTP_REQUEST;
-        message.obj=new RequestParam<>(BASE_URL+"/api/Project/ProjectList", HttpMethod.Post,null,param,new MyCallBack<String>(){
+        Bundle bundle=new Bundle();
+        RequestParam requestParam=new RequestParam<>(BASE_URL+"/api/Project/ProjectList", HttpMethod.PostJson,null,param,new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
                 LogUtils.d("result",result);
                 BaseEntity<ProjectList> entity= JsonParse.parse(result,ProjectList.class);
                 if(entity.isStatus()){
-                    LogUtils.d("result",entity.getResult().getData().size()+"_");
-                }else{
-                    Toast.makeText(context,entity.getMessage(),Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onError(Throwable ex, boolean isOnCallback) {
-                super.onError(ex, isOnCallback);
-                Toast.makeText(context,ex.getMessage(),Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFinished() {
-                super.onFinished();
-                stopProgressDialog();
-            }
-        });
-        handler.sendMessage(message);
-    }
-
-    /**
-     * 获取后台数据
-     */
-    private void getDataBak(){
-        Map<String,String> param=new HashMap<>();
-        param.put("status",listType);
-        param.put("pageIndex",pageIndex+"");
-        param.put("pageSize",pageSize+"");
-        XHttp.Get(Config.BASE_URL + "api/v1/project/getProjectList", param, new MyCallBack<String>() {
-            @Override
-            public void onSuccess(String result) {
-                super.onSuccess(result);
-                LogUtils.d(result);
-                BaseEntity<ProjectListEntity> entity= JsonParse.parse(result,ProjectListEntity.class);
-                if(entity.isStatus()){
                     if(loadStatus==1){
                         dataList.clear();
                     }
-                    ProjectListEntity data=entity.getResult();
-                    dataList.addAll(data.getList());
+                    dataList.addAll(entity.getResult().getData());
                     adapter.notifyDataSetChanged();
                     if(loadStatus==1){
                         msf.setRefreshing(false);
                         adapter.setEnableLoadMore(true);
                     }else{
-                        if(pageIndex*pageSize>=data.getTotalCount()){
+                        if(pageIndex*pageSize>=entity.getResult().getData_count()){
                             adapter.loadMoreEnd();
                         }else{
                             adapter.loadMoreComplete();
@@ -220,30 +171,26 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
                         pageIndex--;
                         adapter.loadMoreFail();
                     }
-                    Toast.makeText(context,entity.getMessage(),Toast.LENGTH_SHORT).show();
+                    showToast(entity.getMessage());
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 super.onError(ex, isOnCallback);
-                if(loadStatus==1){
-                    msf.setRefreshing(false);
-                    adapter.setEnableLoadMore(true);
-                }else{
-                    pageIndex--;
-                    adapter.loadMoreFail();
-                }
-                Toast.makeText(context,ex.getMessage(),Toast.LENGTH_SHORT).show();
+                showToast(ex.getMessage());
             }
 
             @Override
             public void onFinished() {
                 super.onFinished();
+                stopProgressDialog();
             }
         });
+        bundle.putSerializable("request",requestParam);
+        message.setData(bundle);
+        handler.sendMessage(message);
     }
-
     @Override
     public void onRefresh() {
         loadStatus=1;

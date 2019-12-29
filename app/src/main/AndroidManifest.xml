@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 获取MAC地址 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 读写sdcard，storage等等 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 允许程序录制音频 -->
-    <uses-permission android:name="android.permission.GET_TASKS" /> <!-- 支持iBeancon 需要蓝牙权限 -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- 支持个推3.0 电子围栏功能 -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
@@ -47,7 +46,7 @@
         <activity android:name=".ui.PersonActivity" />
         <activity android:name=".ui.NotifyActivity" />
         <activity android:name=".ui.AddProjectActivity" />
-        <activity android:name=".ui.ProjectSearchActivity" />
+        <activity android:name=".ui.ProjectSearchActivity" android:windowSoftInputMode="adjustUnspecified|stateHidden" />
         <activity android:name=".ui.ProjectDetailActivity" />
 
         <receiver android:name=".receiver.NetBroadcastReceiver">

@@ -93,7 +93,9 @@ public class TokenUtils {
      * @return
      */
     public static String getToken(){
-        return SharedPreferencesManage.getToken().getToken();
+        if(SharedPreferencesManage.getToken()!=null)
+            return SharedPreferencesManage.getToken().getToken();
+        return "";
     }
 
     public interface RefreshTokenListener{

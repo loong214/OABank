@@ -54,7 +54,7 @@ public class LaunchActivity extends BaseActivity {
                     public void onNoUpdateAvailable() {
                         //没有更新是回调此方法
                         Log.d("pgyer", "there is no new version");
-                        finish();
+//                        finish();
                         checkAutoLogin();
                     }
                     @Override
@@ -80,7 +80,7 @@ public class LaunchActivity extends BaseActivity {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
-                                            finish();
+//                                            finish();
                                             checkAutoLogin();
                                         }
                                     }).show();
@@ -105,7 +105,7 @@ public class LaunchActivity extends BaseActivity {
                         //更新检测失败回调
                         //更新拒绝（应用被下架，过期，不在安装有效期，下载次数用尽）以及无网络情况会调用此接口
                         Log.e("pgyer", "check update failed ", e);
-                        finish();
+//                        finish();
                         checkAutoLogin();
                     }
                 })
@@ -114,7 +114,7 @@ public class LaunchActivity extends BaseActivity {
                     public void downloadFailed() {
                         //下载失败
                         Log.e("pgyer", "download apk failed");
-                        finish();
+//                        finish();
                         checkAutoLogin();
                     }
 

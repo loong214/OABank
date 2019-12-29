@@ -9,10 +9,8 @@ import android.widget.TextView;
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.EventBusMessage;
-import com.findingdata.oabank.entity.FilterValueEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
 import com.findingdata.oabank.entity.Transition;
-import com.findingdata.oabank.utils.SharedPreferencesManage;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -20,9 +18,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;

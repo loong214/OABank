@@ -6,10 +6,11 @@ package com.findingdata.oabank.utils.http;
  * Describe: 请求方法枚举
  */
 public enum HttpMethod {
-    Post(0x001),
-    Get(0x002),
-    Upload(0x003),
-    Download(0x004);
+    Post(0x01),
+    Get(0x02),
+    Upload(0x03),
+    Download(0x04),
+    PostJson(0x05);
     private final int type;
 
     HttpMethod(int type) {
@@ -18,5 +19,12 @@ public enum HttpMethod {
 
     public int getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return "HttpMethod{" +
+                "type=" + type +
+                '}';
     }
 }

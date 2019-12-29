@@ -7,14 +7,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.LoginEntity;
-import com.findingdata.oabank.entity.TokenEntity;
-import com.findingdata.oabank.utils.Config;
 import com.findingdata.oabank.utils.KeyBoardUtils;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
@@ -22,15 +19,11 @@ import com.findingdata.oabank.utils.http.HttpMethod;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
 import com.findingdata.oabank.utils.http.RequestParam;
-import com.findingdata.oabank.utils.http.XHttp;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,8 +125,5 @@ public class ModifyPasswordActivity extends BaseActivity {
             }
         });
         handler.sendMessage(message);
-    }
-    private void showToast(String content){
-        Toast.makeText(this,content,Toast.LENGTH_SHORT).show();
     }
 }
