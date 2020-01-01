@@ -8,9 +8,38 @@
     <TextView
         android:id="@+id/project_detail_tv_id"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center"
         android:text="项目详情"
         />
-
+    <ImageView
+        android:id="@+id/project_detail_iv_test"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+    <TextView
+        android:id="@+id/project_detail_tv_test1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="选择照片"
+        />
+    <TextView
+        android:id="@+id/project_detail_tv_test2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="选择照片"
+        />
+    <TextView
+        android:id="@+id/project_detail_tv_test3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="选择照片"
+        />
 </LinearLayout>

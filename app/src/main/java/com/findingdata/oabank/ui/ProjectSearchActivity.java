@@ -18,6 +18,7 @@ import com.findingdata.oabank.R;
 import com.findingdata.oabank.adapter.ProjectListAdapter;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
+import com.findingdata.oabank.entity.NotifyListEntity;
 import com.findingdata.oabank.entity.ProjectInfo;
 import com.findingdata.oabank.entity.ProjectList;
 import com.findingdata.oabank.entity.QueryItem;
@@ -123,20 +124,16 @@ public class ProjectSearchActivity extends BaseActivity implements SwipeRefreshL
      * 获取项目列表
      */
     private void getData(){
-        startProgressDialog();
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Project/ProjectList");
+        requestParam.setMethod(HttpMethod.PostJson);
         Map<String,Object> param=new HashMap<>();
         param.put("page_num",pageIndex);
         param.put("page_size",pageSize);
         List<QueryItem> queryItemList=new ArrayList<>();
-//        List<Integer> value=new ArrayList<>();
-//        value.add(listType);
-//        queryItemList.add(new QueryItem("1026",new ArrayList<String>()));
-//        queryItemList.add(new QueryItem("1012",value));
         param.put("query_item_list",queryItemList);
-        Message message=new Message();
-        message.what=HTTP_REQUEST;
-        Bundle bundle=new Bundle();
-        RequestParam requestParam=new RequestParam<>(BASE_URL+"/api/Project/ProjectList", HttpMethod.PostJson,null,param,new MyCallBack<String>(){
+        requestParam.setPostJsonRequest(param);
+        requestParam.setCallback(new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
@@ -182,9 +179,7 @@ public class ProjectSearchActivity extends BaseActivity implements SwipeRefreshL
                 stopProgressDialog();
             }
         });
-        bundle.putSerializable("request",requestParam);
-        message.setData(bundle);
-        handler.sendMessage(message);
+        sendRequsest(requestParam,true);
     }
 
     @Event({R.id.toolbar_btn_back,R.id.project_search_btn_submit})

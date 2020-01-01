@@ -1,7 +1,9 @@
 package com.findingdata.oabank.ui;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,15 +14,21 @@ import com.findingdata.oabank.R;
 import com.findingdata.oabank.adapter.NotifyListAdapter;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
+import com.findingdata.oabank.entity.EventBusMessage;
 import com.findingdata.oabank.entity.NotifyEntity;
 import com.findingdata.oabank.entity.NotifyListEntity;
+import com.findingdata.oabank.entity.UserInfo;
 import com.findingdata.oabank.utils.Config;
 import com.findingdata.oabank.utils.LogUtils;
+import com.findingdata.oabank.utils.SharedPreferencesManage;
+import com.findingdata.oabank.utils.http.HttpMethod;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
+import com.findingdata.oabank.utils.http.RequestParam;
 import com.findingdata.oabank.utils.http.XHttp;
 import com.findingdata.oabank.weidgt.RecyclerViewDivider;
 
+import org.greenrobot.eventbus.EventBus;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -34,6 +42,9 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
+import static com.findingdata.oabank.utils.Config.BASE_URL;
 
 /**
  * Created by Loong on 2019/11/21.
@@ -70,8 +81,7 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
         mrv.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //startActivity(new Intent(NotifyActivity.this, ProjectDetailsActivity.class).putExtra("project_id", dataList.get(position).getProject_id()));
-                showToast(dataList.get(position).getF_name());
+                readMessage(position);
             }
         });
 
@@ -85,35 +95,69 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
         getData();
     }
 
+    private void readMessage(final int position){
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Message/ReadMessage");
+        requestParam.setMethod(HttpMethod.PostJson);
+        List<Integer> list=new ArrayList<>();
+        list.add(dataList.get(position).getMESSAGE_ID());
+        requestParam.setPostJsonRequest(list);
+        requestParam.setCallback(new MyCallBack<String>(){
+            @Override
+            public void onSuccess(String result) {
+                super.onSuccess(result);
+                LogUtils.d("result",result);
+                BaseEntity<String> entity= JsonParse.parse(result,String.class);
+                if(entity.isStatus()){
+                    dataList.get(position).setMESSAGE_STATUS(1);
+                    adapter.notifyDataSetChanged();
+                    EventBus.getDefault().post(new EventBusMessage<>("UnReadMessage"));
+                }else{
+                    showToast(entity.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                super.onError(ex, isOnCallback);
+                showToast(ex.getMessage());
+            }
+        });
+        sendRequsest(requestParam,false);
+    }
+
     /**
      * 获取后台数据
      */
     private void getData(){
-        Map<String,String> param=new HashMap<>();
-        param.put("pageIndex",pageIndex+"");
-        param.put("pageSize",pageSize+"");
-        XHttp.Get(Config.BASE_URL + "api/v1/base/getAllFile", param, new MyCallBack<String>() {
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Message/GetMessageRecrds");
+        requestParam.setMethod(HttpMethod.Get);
+        Map<String,String> getRequestMap=new HashMap<>();
+        getRequestMap.put("page_num",pageIndex+"");
+        getRequestMap.put("page_size",pageSize+"");
+        requestParam.setGetRequestMap(getRequestMap);
+        requestParam.setCallback(new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
-                LogUtils.d(result);
+                LogUtils.d("result",result);
                 BaseEntity<NotifyListEntity> entity= JsonParse.parse(result,NotifyListEntity.class);
                 if(entity.isStatus()){
                     if(loadStatus==1){
                         dataList.clear();
                     }
                     NotifyListEntity data=entity.getResult();
-                    dataList.addAll(data.getList());
+                    dataList.addAll(data.getData());
                     adapter.notifyDataSetChanged();
                     if(loadStatus==1){
                         msf.setRefreshing(false);
                         adapter.setEnableLoadMore(true);
+                    }
+                    if(pageIndex >= data.getPage_count()){
+                        adapter.loadMoreEnd();
                     }else{
-                        if(pageIndex*pageSize>=data.getTotalCount()){
-                            adapter.loadMoreEnd();
-                        }else{
-                            adapter.loadMoreComplete();
-                        }
+                        adapter.loadMoreComplete();
                     }
                 }else{
                     if(loadStatus==1){
@@ -130,22 +174,18 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 super.onError(ex, isOnCallback);
-                if(loadStatus==1){
-                    msf.setRefreshing(false);
-                    adapter.setEnableLoadMore(true);
-                }else{
-                    pageIndex--;
-                    adapter.loadMoreFail();
-                }
                 showToast(ex.getMessage());
             }
 
             @Override
             public void onFinished() {
                 super.onFinished();
+                stopProgressDialog();
             }
         });
+        sendRequsest(requestParam,false);
     }
+
 
     @Override
     public void onRefresh() {

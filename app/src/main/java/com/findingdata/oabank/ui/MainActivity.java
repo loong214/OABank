@@ -2,15 +2,23 @@ package com.findingdata.oabank.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
+import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.EventBusMessage;
+import com.findingdata.oabank.entity.NotifyListEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
 import com.findingdata.oabank.entity.Transition;
+import com.findingdata.oabank.utils.LogUtils;
+import com.findingdata.oabank.utils.http.HttpMethod;
+import com.findingdata.oabank.utils.http.JsonParse;
+import com.findingdata.oabank.utils.http.MyCallBack;
+import com.findingdata.oabank.utils.http.RequestParam;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -19,12 +27,18 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
+import static com.findingdata.oabank.utils.Config.BASE_URL;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends BaseActivity {
@@ -46,7 +60,8 @@ public class MainActivity extends BaseActivity {
     private TextView tab_stop;
     @ViewInject(R.id.drawer_layout)
     private DrawerLayout drawerLayout;
-
+    @ViewInject(R.id.main_iv_notify_dot)
+    private ImageView main_iv_notify_dot;
 
     private Context context;
     private TextView[] tabs = new TextView[4];
@@ -66,10 +81,42 @@ public class MainActivity extends BaseActivity {
                 new NavigationViewFragment()).commitAllowingStateLoss();
         initTabs();
         setTabSelection(0);
-
         //注册监听
         EventBus.getDefault().register(this);
+        //获取未读消息
+        getUnReadMessage();
     }
+
+    private void getUnReadMessage(){
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Message/GetUnReadCount");
+        requestParam.setMethod(HttpMethod.Get);
+        requestParam.setCallback(new MyCallBack<String>(){
+            @Override
+            public void onSuccess(String result) {
+                super.onSuccess(result);
+                LogUtils.d("result",result);
+                BaseEntity<Integer> entity= JsonParse.parse(result,Integer.class);
+                if(entity.isStatus()){
+                    if(entity.getResult()>0){
+                        main_iv_notify_dot.setVisibility(View.VISIBLE);
+                    }else{
+                        main_iv_notify_dot.setVisibility(View.GONE);
+                    }
+                }else{
+                    showToast(entity.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                super.onError(ex, isOnCallback);
+                showToast(ex.getMessage());
+            }
+        });
+        sendRequsest(requestParam,false);
+    }
+
     private void initTabs() {
         tabs[0] = tab_todo;
         tabs[1] = tab_doing;
@@ -212,6 +259,8 @@ public class MainActivity extends BaseActivity {
     public void Event(EventBusMessage message){
         if("NavClose".equals(message.getMessage())){
             drawerLayout.closeDrawers();
+        }else if("UnReadMessage".equals(message.getMessage())){
+            getUnReadMessage();
         }
     }
 }

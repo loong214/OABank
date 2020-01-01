@@ -17,14 +17,33 @@ public class RequestParam<T> implements Serializable {
     private HttpMethod method;
     private Map<String,String> getRequestMap;
     private Map<String,Object> postRequestMap;
+    private Object postJsonRequest;
+    private String filepath;
     private Callback.CommonCallback<T> callback;
+    private Callback.ProgressCallback<T> progressCallback;
 
-    public RequestParam(String url, HttpMethod method, Map<String, String> getRequestMap, Map<String, Object> postRequestMap, Callback.CommonCallback<T> callback) {
-        this.url = url;
-        this.method = method;
-        this.getRequestMap = getRequestMap;
-        this.postRequestMap = postRequestMap;
-        this.callback = callback;
+    public Callback.ProgressCallback<T> getProgressCallback() {
+        return progressCallback;
+    }
+
+    public void setProgressCallback(Callback.ProgressCallback<T> progressCallback) {
+        this.progressCallback = progressCallback;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
+    }
+
+    public Object getPostJsonRequest() {
+        return postJsonRequest;
+    }
+
+    public void setPostJsonRequest(Object postJsonRequest) {
+        this.postJsonRequest = postJsonRequest;
     }
 
     public String getUrl() {

@@ -41,74 +41,17 @@ public class BaseHandler extends Handler {
         final Activity activity = mActivity.get();
         if (activity != null) {
             if(msg.what == HTTP_REQUEST){
-                if(!TokenUtils.isTokenValid()){
-                    if(TokenUtils.isLoginInfoExist()){
-                        TokenUtils.refreshToken(new TokenUtils.RefreshTokenListener() {
-                            @Override
-                            public void success() {
-                                RequestParam requestParam= (RequestParam) msg.obj;
-                                switch (requestParam.getMethod()){
-                                    case Post:
-                                        taskList.add(XHttp.Post(requestParam.getUrl(),requestParam.getPostRequestMap(),requestParam.getCallback()));
-                                        break;
-                                    case PostJson:
-                                        taskList.add(XHttp.PostJson(requestParam.getUrl(),requestParam.getPostRequestMap(),requestParam.getCallback()));
-                                        break;
-                                    case Get:
-                                        taskList.add(XHttp.Get(requestParam.getUrl(),requestParam.getGetRequestMap(),requestParam.getCallback()));
-                                        break;
-                                }
-                            }
+                checkRequest(new TokenUtils.RefreshTokenListener() {
+                    @Override
+                    public void success() {
+                        doRequest(msg);
+                    }
 
-                            @Override
-                            public void fail(String errMsg) {
-                                new AlertDialog.Builder(activity)
-                                        .setTitle("重新登录")
-                                        .setMessage("您的登录信息已过期，请重新登录！")
-                                        .setCancelable(false)
-                                        .setNegativeButton(
-                                                "去登录",
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        activity.startActivity(new Intent(activity, LoginActivity.class));
-                                                        ExitAppUtils.getInstance().exit();
-                                                    }
-                                                }).show();
-                            }
-                        });
-                    }else{
-                        new AlertDialog.Builder(activity)
-                                .setTitle("重新登录")
-                                .setMessage("您的登录信息已过期，请重新登录！")
-                                .setCancelable(false)
-                                .setNegativeButton(
-                                        "去登录",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                activity.startActivity(new Intent(activity, LoginActivity.class));
-                                                ExitAppUtils.getInstance().exit();
-                                            }
-                                        }).show();
+                    @Override
+                    public void fail(String errMsg) {
+                        alertLogin(activity);
                     }
-                }else{
-                    RequestParam requestParam= (RequestParam) msg.getData().getSerializable("request");
-                    LogUtil.d(requestParam.getMethod().toString()+"++++");
-                    switch (requestParam.getMethod()){
-                        case Post:
-                            taskList.add(XHttp.Post(requestParam.getUrl(),requestParam.getPostRequestMap(),requestParam.getCallback()));
-                            break;
-                        case PostJson:
-                            LogUtil.d(requestParam.getMethod().getType()+"++++");
-                            taskList.add(XHttp.PostJson(requestParam.getUrl(),requestParam.getPostRequestMap(),requestParam.getCallback()));
-                            break;
-                        case Get:
-                            LogUtil.d(requestParam.getMethod().getType()+"++++");
-                            taskList.add(XHttp.Get(requestParam.getUrl(),requestParam.getGetRequestMap(),requestParam.getCallback()));
-                            break;
-                    }
-                }
+                });
             }else if(msg.what==CHECK_LOGIN){
                 if(!TokenUtils.isTokenValid()){
                     if(TokenUtils.isLoginInfoExist()){
@@ -135,6 +78,156 @@ public class BaseHandler extends Handler {
                 }
 
             }
+        }
+    }
+//      @Override
+//    public void handleMessage(final Message msg) {
+//        final Activity activity = mActivity.get();
+//        if (activity != null) {
+//            if(msg.what == HTTP_REQUEST){
+//                if(!TokenUtils.isTokenValid()){
+//                    if(TokenUtils.isLoginInfoExist()){
+//                        TokenUtils.refreshToken(new TokenUtils.RefreshTokenListener() {
+//                            @Override
+//                            public void success() {
+//                                RequestParam requestParam= (RequestParam) msg.obj;
+//                                switch (requestParam.getMethod()){
+//                                    case Post:
+//                                        taskList.add(XHttp.Post(requestParam.getUrl(),requestParam.getPostRequestMap(),requestParam.getCallback()));
+//                                        break;
+//                                    case PostJson:
+//                                        taskList.add(XHttp.PostJson(requestParam.getUrl(),requestParam.getPostJsonRequest(),requestParam.getCallback()));
+//                                        break;
+//                                    case Get:
+//                                        taskList.add(XHttp.Get(requestParam.getUrl(),requestParam.getGetRequestMap(),requestParam.getCallback()));
+//                                        break;
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void fail(String errMsg) {
+//                                new AlertDialog.Builder(activity)
+//                                        .setTitle("重新登录")
+//                                        .setMessage("您的登录信息已过期，请重新登录！")
+//                                        .setCancelable(false)
+//                                        .setNegativeButton(
+//                                                "去登录",
+//                                                new DialogInterface.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(DialogInterface dialog, int which) {
+//                                                        activity.startActivity(new Intent(activity, LoginActivity.class));
+//                                                        ExitAppUtils.getInstance().exit();
+//                                                    }
+//                                                }).show();
+//                            }
+//                        });
+//                    }else{
+//                        new AlertDialog.Builder(activity)
+//                                .setTitle("重新登录")
+//                                .setMessage("您的登录信息已过期，请重新登录！")
+//                                .setCancelable(false)
+//                                .setNegativeButton(
+//                                        "去登录",
+//                                        new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+//                                                activity.startActivity(new Intent(activity, LoginActivity.class));
+//                                                ExitAppUtils.getInstance().exit();
+//                                            }
+//                                        }).show();
+//                    }
+//                }else{
+//                    RequestParam requestParam= (RequestParam) msg.getData().getSerializable("request");
+//                    LogUtil.d(requestParam.getMethod().toString()+"++++");
+//                    switch (requestParam.getMethod()){
+//                        case Post:
+//                            taskList.add(XHttp.Post(requestParam.getUrl(),requestParam.getPostRequestMap(),requestParam.getCallback()));
+//                            break;
+//                        case PostJson:
+//                            LogUtil.d(requestParam.getMethod().getType()+"++++");
+//                            taskList.add(XHttp.PostJson(requestParam.getUrl(),requestParam.getPostJsonRequest(),requestParam.getCallback()));
+//                            break;
+//                        case Get:
+//                            LogUtil.d(requestParam.getMethod().getType()+"++++");
+//                            taskList.add(XHttp.Get(requestParam.getUrl(),requestParam.getGetRequestMap(),requestParam.getCallback()));
+//                            break;
+//                    }
+//                }
+//            }else if(msg.what==CHECK_LOGIN){
+//                if(!TokenUtils.isTokenValid()){
+//                    if(TokenUtils.isLoginInfoExist()){
+//                        TokenUtils.refreshToken(new TokenUtils.RefreshTokenListener() {
+//                            @Override
+//                            public void success() {
+//                                activity.startActivity(new Intent(activity, MainActivity.class));
+//                                activity.finish();
+//                            }
+//
+//                            @Override
+//                            public void fail(String errMsg) {
+//                                activity.startActivity(new Intent(activity,LoginActivity.class));
+//                                activity.finish();
+//                            }
+//                        });
+//                    }else{
+//                        activity.startActivity(new Intent(activity,LoginActivity.class));
+//                        activity.finish();
+//                    }
+//                }else{
+//                    activity.startActivity(new Intent(activity, MainActivity.class));
+//                    activity.finish();
+//                }
+//
+//            }
+//        }
+//    }
+//
+
+    private void doRequest(Message msg){
+        RequestParam requestParam= (RequestParam) msg.getData().getSerializable("request");
+        switch (requestParam.getMethod()){
+            case Get:
+                taskList.add(XHttp.Get(requestParam.getUrl(),requestParam.getGetRequestMap(),requestParam.getCallback()));
+                break;
+            case Post:
+                taskList.add(XHttp.Post(requestParam.getUrl(),requestParam.getPostRequestMap(),requestParam.getCallback()));
+                break;
+            case PostJson:
+                taskList.add(XHttp.PostJson(requestParam.getUrl(),requestParam.getPostJsonRequest(),requestParam.getCallback()));
+                break;
+            case Download:
+                taskList.add(XHttp.DownLoadFile(requestParam.getUrl(),requestParam.getFilepath(),requestParam.getProgressCallback()));
+                break;
+            case Upload:
+                taskList.add(XHttp.UpLoadFile(requestParam.getUrl(),requestParam.getPostRequestMap(),requestParam.getCallback()));
+                break;
+        }
+    }
+    private void alertLogin(final Activity activity){
+        new AlertDialog.Builder(activity)
+                .setTitle("重新登录")
+                .setMessage("您的登录信息已过期，请重新登录！")
+                .setCancelable(false)
+                .setNegativeButton(
+                        "去登录",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                activity.startActivity(new Intent(activity, LoginActivity.class));
+                                ExitAppUtils.getInstance().exit();
+                            }
+                        }).show();
+    }
+    private void checkRequest(TokenUtils.RefreshTokenListener listener){
+        final Activity activity = mActivity.get();
+        if(!TokenUtils.isTokenValid()) {
+            if (TokenUtils.isLoginInfoExist()) {
+                TokenUtils.refreshToken(listener);
+            }else{
+                alertLogin(activity);
+            }
+        }else{
+            listener.success();
         }
     }
 }

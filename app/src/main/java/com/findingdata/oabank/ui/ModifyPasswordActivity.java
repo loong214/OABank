@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
+import com.findingdata.oabank.entity.FilterEntity;
+import com.findingdata.oabank.entity.FilterValueEntity;
 import com.findingdata.oabank.entity.LoginEntity;
 import com.findingdata.oabank.utils.KeyBoardUtils;
 import com.findingdata.oabank.utils.LogUtils;
@@ -19,12 +21,19 @@ import com.findingdata.oabank.utils.http.HttpMethod;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
 import com.findingdata.oabank.utils.http.RequestParam;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
@@ -89,13 +98,14 @@ public class ModifyPasswordActivity extends BaseActivity {
             return;
         }
 
-        startProgressDialog();
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Project/GetQueryItems");
+        requestParam.setMethod(HttpMethod.Post);
         Map<String,Object> params=new HashMap<>();
         params.put("OldPassword", old_pwd);
         params.put("NewPassword", new_pwd);
-        Message message=new Message();
-        message.what=HTTP_REQUEST;
-        message.obj=new RequestParam<>(BASE_URL+"/api/User/ResetPassword", HttpMethod.Post,null,params,new MyCallBack<String>(){
+        requestParam.setPostRequestMap(params);
+        requestParam.setCallback(new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
@@ -124,6 +134,6 @@ public class ModifyPasswordActivity extends BaseActivity {
                 stopProgressDialog();
             }
         });
-        handler.sendMessage(message);
+        sendRequsest(requestParam,true);
     }
 }

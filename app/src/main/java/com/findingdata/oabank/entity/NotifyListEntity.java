@@ -11,50 +11,53 @@ import java.util.List;
 public class NotifyListEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * totalCount : 23
-     * pageIndex : 1
-     * pageSize : 10
-     * list : [{"f_id":"1158e260-0c56-11ea-8003-9f39673eebae","f_original_name":"201911201616127949.jpg","f_name":"92d3e1fab9ec46f07ef7c9f92c33a185.jpg","f_path":"file/92d3e1fab9ec46f07ef7c9f92c33a185.jpg","f_size":29878,"f_mime":"image/jpeg","f_create_time":"2019-11-21T11:57:19.000Z","f_create_by":"c54e3a80-eafb-11e9-96a1-61c4c64d42ff"}]
-     */
+    private int data_count;
+    private int page_count;
+    private int page_no;
+    private int page_size;
+    private List<NotifyEntity> data;
 
-    private int totalCount;
-    private int pageIndex;
-    private int pageSize;
-    private List<NotifyEntity> list;
-
-    public int getTotalCount() {
-        return totalCount;
+    public int getData_count() {
+        return data_count;
     }
 
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
+    public void setData_count(int data_count) {
+        this.data_count = data_count;
     }
 
-    public int getPageIndex() {
-        return pageIndex;
+    public int getPage_count() {
+        return page_count;
     }
 
-    public void setPageIndex(int pageIndex) {
-        this.pageIndex = pageIndex;
+    public void setPage_count(int page_count) {
+        this.page_count = page_count;
     }
 
-    public int getPageSize() {
-        return pageSize;
+    public int getPage_no() {
+        return page_no;
     }
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public void setPage_no(int page_no) {
+        this.page_no = page_no;
     }
 
-    public List<NotifyEntity> getList() {
-        return list;
+    public int getPage_size() {
+        return page_size;
     }
 
-    public void setList(List<NotifyEntity> list) {
-        this.list = list;
+    public void setPage_size(int page_size) {
+        this.page_size = page_size;
     }
 
-    public static class ListBean {
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public List<NotifyEntity> getData() {
+        return data;
+    }
+
+    public void setData(List<NotifyEntity> data) {
+        this.data = data;
     }
 }

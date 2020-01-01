@@ -3,7 +3,6 @@ package com.findingdata.oabank.ui;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -11,6 +10,7 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.loadmore.SimpleLoadMoreView;
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.adapter.ProjectListAdapter;
+import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.base.BaseFragment;
 import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.EventBusMessage;
@@ -44,7 +44,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
 import static com.findingdata.oabank.utils.Config.BASE_URL;
 
 /**
@@ -128,7 +127,18 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
      * 获取项目列表
      */
     private void getData(){
-        startProgressDialog();
+        if(!((BaseActivity)getActivity()).isNetConnect){
+            if(loadStatus==1){
+                msf.setRefreshing(false);
+                adapter.setEnableLoadMore(true);
+            }else{
+                pageIndex--;
+                adapter.loadMoreFail();
+            }
+        }
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Project/ProjectList");
+        requestParam.setMethod(HttpMethod.PostJson);
         Map<String,Object> param=new HashMap<>();
         param.put("page_num",pageIndex);
         param.put("page_size",pageSize);
@@ -138,10 +148,8 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
         queryItemList.add(new QueryItem("1026",new ArrayList<String>()));
         queryItemList.add(new QueryItem("1012",value));
         param.put("query_item_list",queryItemList);
-        Message message=new Message();
-        message.what=HTTP_REQUEST;
-        Bundle bundle=new Bundle();
-        RequestParam requestParam=new RequestParam<>(BASE_URL+"/api/Project/ProjectList", HttpMethod.PostJson,null,param,new MyCallBack<String>(){
+        requestParam.setPostJsonRequest(param);
+        requestParam.setCallback(new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
@@ -187,9 +195,8 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
                 stopProgressDialog();
             }
         });
-        bundle.putSerializable("request",requestParam);
-        message.setData(bundle);
-        handler.sendMessage(message);
+        sendRequsest(requestParam,true);
+
     }
     @Override
     public void onRefresh() {

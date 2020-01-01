@@ -71,7 +71,7 @@ public class XHttp {
      *
      * @param <T>
      */
-    public static <T> Callback.Cancelable PostJson(String url, Map<String, Object> map, Callback.CommonCallback<T> callback) {
+    public static <T> Callback.Cancelable PostJson(String url, Object object, Callback.CommonCallback<T> callback) {
         LogUtil.d(url);
         RequestParams params = new RequestParams(url);
         if(!url.equals(BASE_URL+"/api/Home/Login")){
@@ -82,10 +82,11 @@ public class XHttp {
             params.addHeader("Cookie",sbCookie.toString());
             LogUtils.d("Cookie",sbCookie);
         }
-        if (null != map) {
+        if (null != object) {
             Gson gson=new Gson();
+            LogUtil.d(gson.toJson(object));
             params.setAsJsonContent(true);
-            params.setBodyContent(gson.toJson(map));
+            params.setBodyContent(gson.toJson(object));
 
         }
         return x.http().post(params, callback);
@@ -106,7 +107,6 @@ public class XHttp {
         params.setMultipart(true);
         return x.http().post(params, callback);
     }
-
 
     /**
      * 下载文件

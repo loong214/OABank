@@ -17,6 +17,8 @@ import com.findingdata.oabank.entity.EventBusMessage;
 import com.findingdata.oabank.entity.FilterEntity;
 import com.findingdata.oabank.entity.FilterItemEntity;
 import com.findingdata.oabank.entity.FilterValueEntity;
+import com.findingdata.oabank.entity.ProjectList;
+import com.findingdata.oabank.entity.QueryItem;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.http.HttpMethod;
@@ -76,12 +78,13 @@ public class NavigationViewFragment extends BaseFragment {
 
     //加载配置的查询条件
     private void getQueryData(){
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Project/GetQueryItems");
+        requestParam.setMethod(HttpMethod.Get);
         Map<String,String> map=new HashMap<>();
         map.put("RESOURCEID", "9001001");
-        Message message=new Message();
-        message.what=HTTP_REQUEST;
-        Bundle bundle=new Bundle();
-        bundle.putSerializable("request",new RequestParam<>(BASE_URL+"/api/Project/GetQueryItems", HttpMethod.Get,map,null,new MyCallBack<String>(){
+        requestParam.setGetRequestMap(map);
+        requestParam.setCallback(new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
@@ -113,9 +116,9 @@ public class NavigationViewFragment extends BaseFragment {
                 super.onError(ex, isOnCallback);
                 showToast(ex.getMessage());
             }
-        }));
-        message.setData(bundle);
-        handler.sendMessage(message);
+        });
+        sendRequsest(requestParam,false);
+
     }
     //初始化视图
     private void initView(){

@@ -22,8 +22,13 @@ public class NotifyListAdapter extends BaseQuickAdapter<NotifyEntity, BaseViewHo
 
     @Override
     protected void convert(@NonNull BaseViewHolder helper, NotifyEntity item) {
-        helper.setText(R.id.notify_list_name,item.getF_name());
-        helper.setText(R.id.notify_list_time,item.getF_create_time());
-        helper.setText(R.id.notify_list_content,item.getF_path()+"  "+item.getF_name());
+        helper.setText(R.id.notify_list_name,item.getRFROM());
+        helper.setText(R.id.notify_list_time,item.getCREATED_TIME());
+        helper.setText(R.id.notify_list_content,item.getMESSAGE_CONTENT());
+        if(item.getMESSAGE_STATUS()==0){
+            helper.setVisible(R.id.notify_list_read, true);
+        }else{
+            helper.setVisible(R.id.notify_list_read, false);
+        }
     }
 }

@@ -1,8 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
-    <string name="app_name">OABank</string>
+    <string name="app_name">OA银行</string>
 
+    <string name="permission_request_denied">需要相应的权限</string>
+    <string name="error_gif">长宽不小于 %1$dpx，且大小不超过 %2$sM。</string>
+    <string name="error_original">大小不超过 %1$sM。</string>
 
-    <!--个推-->
     <string name="no_clientid">(none)</string>
     <string name="start">已启动</string>
     <string name="clientid">clientid&#160;=&#160;</string>
@@ -67,5 +71,4 @@
     <string name="push_notification_msg_content">您收到一条测试消息，点击访问</string>
     <string name="push_transmission_data">收到一条透传测试消息</string>
     <string name="network_invalid">对不起，当前网络不可用!</string>
-    <string name="title_activity_modify_password">ModifyPasswordActivity</string>
 </resources>

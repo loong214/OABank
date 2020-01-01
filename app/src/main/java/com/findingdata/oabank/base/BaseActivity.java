@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Message;
 import android.widget.Toast;
 
 import com.findingdata.oabank.R;
@@ -16,6 +17,7 @@ import com.findingdata.oabank.utils.ExitAppUtils;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.NetworkUtils;
 import com.findingdata.oabank.utils.StatusBarUtil;
+import com.findingdata.oabank.utils.http.RequestParam;
 import com.findingdata.oabank.weidgt.ProgressDialogView;
 
 import org.xutils.common.Callback;
@@ -28,6 +30,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import static com.findingdata.oabank.FDApplication.activityTrans;
+import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
 
 /**
  * Created by zengx on 2019/11/17.
@@ -40,6 +43,7 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
 
     private static List<Callback.Cancelable> taskList;
 
+    public boolean isNetConnect=true;
     protected static BaseHandler handler;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,7 +101,24 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
 
     @Override
     public void onNetChange(int netMobile) {
+        isNetConnect=NetworkUtils.isNetConnect(netMobile);
         LogUtils.d(NetworkUtils.isNetConnect(netMobile));
+    }
+
+    protected void sendRequsest(RequestParam requestParam,boolean showProgressDialog){
+        if(isNetConnect){
+            if(showProgressDialog){
+                startProgressDialog();
+            }
+            Message message=new Message();
+            message.what=HTTP_REQUEST;
+            Bundle bundle=new Bundle();
+            bundle.putSerializable("request",requestParam);
+            message.setData(bundle);
+            handler.sendMessage(message);
+        }else{
+           showToast("没有网络，请前往网络设置检查");
+        }
     }
 
     /**

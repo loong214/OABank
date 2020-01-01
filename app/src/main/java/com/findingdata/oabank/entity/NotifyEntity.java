@@ -12,86 +12,136 @@ public class NotifyEntity implements Serializable {
 
 
     /**
-     * f_id : 1158e260-0c56-11ea-8003-9f39673eebae
-     * f_original_name : 201911201616127949.jpg
-     * f_name : 92d3e1fab9ec46f07ef7c9f92c33a185.jpg
-     * f_path : file/92d3e1fab9ec46f07ef7c9f92c33a185.jpg
-     * f_size : 29878
-     * f_mime : image/jpeg
-     * f_create_time : 2019-11-21T11:57:19.000Z
-     * f_create_by : c54e3a80-eafb-11e9-96a1-61c4c64d42ff
+     * RID : 1
+     * MESSAGE_ID : 394
+     * CUSTOMER_ID : 862
+     * READED_TIME :
+     * RFROM : 长沙县经典
+     * RTO : 862
+     * MESSAGE_TITLE :
+     * MESSAGE_CONTENT : 项目 凤凰城 评估公司已立项.
+     * MESSAGE_STATUS : 0
+     * CREATED_TIME : 2019-12-23T11:19:48
+     * MESSAGE_TYPE : 1
+     * MESSAGE_TYPE_CHS :
+     * IS_SYSTEM_MESSAGE :
      */
 
-    private String f_id;
-    private String f_original_name;
-    private String f_name;
-    private String f_path;
-    private int f_size;
-    private String f_mime;
-    private String f_create_time;
-    private String f_create_by;
+    private int RID;
+    private int MESSAGE_ID;
+    private int CUSTOMER_ID;
+    private String READED_TIME;
+    private String RFROM;
+    private int RTO;
+    private String MESSAGE_TITLE;
+    private String MESSAGE_CONTENT;
+    private int MESSAGE_STATUS;
+    private String CREATED_TIME;
+    private int MESSAGE_TYPE;
+    private String MESSAGE_TYPE_CHS;
+    private String IS_SYSTEM_MESSAGE;
 
-    public String getF_id() {
-        return f_id;
+    public int getRID() {
+        return RID;
     }
 
-    public void setF_id(String f_id) {
-        this.f_id = f_id;
+    public void setRID(int RID) {
+        this.RID = RID;
     }
 
-    public String getF_original_name() {
-        return f_original_name;
+    public int getMESSAGE_ID() {
+        return MESSAGE_ID;
     }
 
-    public void setF_original_name(String f_original_name) {
-        this.f_original_name = f_original_name;
+    public void setMESSAGE_ID(int MESSAGE_ID) {
+        this.MESSAGE_ID = MESSAGE_ID;
     }
 
-    public String getF_name() {
-        return f_name;
+    public int getCUSTOMER_ID() {
+        return CUSTOMER_ID;
     }
 
-    public void setF_name(String f_name) {
-        this.f_name = f_name;
+    public void setCUSTOMER_ID(int CUSTOMER_ID) {
+        this.CUSTOMER_ID = CUSTOMER_ID;
     }
 
-    public String getF_path() {
-        return f_path;
+    public String getREADED_TIME() {
+        return READED_TIME;
     }
 
-    public void setF_path(String f_path) {
-        this.f_path = f_path;
+    public void setREADED_TIME(String READED_TIME) {
+        this.READED_TIME = READED_TIME;
     }
 
-    public int getF_size() {
-        return f_size;
+    public String getRFROM() {
+        return RFROM;
     }
 
-    public void setF_size(int f_size) {
-        this.f_size = f_size;
+    public void setRFROM(String RFROM) {
+        this.RFROM = RFROM;
     }
 
-    public String getF_mime() {
-        return f_mime;
+    public int getRTO() {
+        return RTO;
     }
 
-    public void setF_mime(String f_mime) {
-        this.f_mime = f_mime;
+    public void setRTO(int RTO) {
+        this.RTO = RTO;
     }
 
-    public String getF_create_time() {
-        return f_create_time;
+    public String getMESSAGE_TITLE() {
+        return MESSAGE_TITLE;
     }
 
-    public void setF_create_time(String f_create_time) {
-        this.f_create_time = f_create_time;
+    public void setMESSAGE_TITLE(String MESSAGE_TITLE) {
+        this.MESSAGE_TITLE = MESSAGE_TITLE;
     }
 
-    public String getF_create_by() {
-        return f_create_by;
+    public String getMESSAGE_CONTENT() {
+        return MESSAGE_CONTENT;
     }
 
-    public void setF_create_by(String f_create_by) {
-        this.f_create_by = f_create_by;
+    public void setMESSAGE_CONTENT(String MESSAGE_CONTENT) {
+        this.MESSAGE_CONTENT = MESSAGE_CONTENT;
+    }
+
+    public int getMESSAGE_STATUS() {
+        return MESSAGE_STATUS;
+    }
+
+    public void setMESSAGE_STATUS(int MESSAGE_STATUS) {
+        this.MESSAGE_STATUS = MESSAGE_STATUS;
+    }
+
+    public String getCREATED_TIME() {
+        return CREATED_TIME;
+    }
+
+    public void setCREATED_TIME(String CREATED_TIME) {
+        this.CREATED_TIME = CREATED_TIME;
+    }
+
+    public int getMESSAGE_TYPE() {
+        return MESSAGE_TYPE;
+    }
+
+    public void setMESSAGE_TYPE(int MESSAGE_TYPE) {
+        this.MESSAGE_TYPE = MESSAGE_TYPE;
+    }
+
+    public String getMESSAGE_TYPE_CHS() {
+        return MESSAGE_TYPE_CHS;
+    }
+
+    public void setMESSAGE_TYPE_CHS(String MESSAGE_TYPE_CHS) {
+        this.MESSAGE_TYPE_CHS = MESSAGE_TYPE_CHS;
+    }
+
+    public String getIS_SYSTEM_MESSAGE() {
+        return IS_SYSTEM_MESSAGE;
+    }
+
+    public void setIS_SYSTEM_MESSAGE(String IS_SYSTEM_MESSAGE) {
+        this.IS_SYSTEM_MESSAGE = IS_SYSTEM_MESSAGE;
     }
 }

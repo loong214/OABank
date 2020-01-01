@@ -95,11 +95,10 @@ public class LoginActivity extends BaseActivity {
     }
     //获取当前用户信息并缓存
     private void getUserInfo(){
-        startProgressDialog();
-        Message message=new Message();
-        message.what=HTTP_REQUEST;
-        Bundle bundle=new Bundle();
-        RequestParam requestParam=new RequestParam<>(BASE_URL+"/api/Home/GetUserInfo", HttpMethod.Get,null,null,new MyCallBack<String>(){
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Home/GetUserInfo");
+        requestParam.setMethod(HttpMethod.Get);
+        requestParam.setCallback(new MyCallBack<String>(){
             @Override
             public void onSuccess(String result) {
                 super.onSuccess(result);
@@ -126,8 +125,6 @@ public class LoginActivity extends BaseActivity {
                 stopProgressDialog();
             }
         });
-        bundle.putSerializable("request",requestParam);
-        message.setData(bundle);
-        handler.sendMessage(message);
+        sendRequsest(requestParam,false);
     }
 }
