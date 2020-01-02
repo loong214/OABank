@@ -16,8 +16,8 @@ import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.EventBusMessage;
 import com.findingdata.oabank.entity.FilterValueEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
-import com.findingdata.oabank.entity.ProjectInfo;
-import com.findingdata.oabank.entity.ProjectList;
+import com.findingdata.oabank.entity.ProjectEntity;
+import com.findingdata.oabank.entity.ProjectListEntity;
 import com.findingdata.oabank.entity.QueryItem;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
@@ -44,7 +44,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import static com.findingdata.oabank.utils.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.BASE_URL;
 
 /**
  * Created by Loong on 2019/11/20.
@@ -73,8 +73,8 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
     private RecyclerView mrv;
 
     private int pageIndex = 1;
-    private int pageSize = 5;
-    private List<ProjectInfo> dataList=new ArrayList<>();
+    private int pageSize = 10;
+    private List<ProjectEntity> dataList=new ArrayList<>();
     private ProjectListAdapter adapter;
     private int loadStatus=2;//1为刷新，2为加载更多
 
@@ -147,6 +147,11 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
         value.add(listType);
         queryItemList.add(new QueryItem("1026",new ArrayList<String>()));
         queryItemList.add(new QueryItem("1012",value));
+        for (int i = 0; i < filterValue.size(); i++) {
+            List<String> _value=new ArrayList<>();
+            _value.add(filterValue.get(i).getValue());
+            queryItemList.add(new QueryItem(filterValue.get(i).getKey(),_value));
+        }
         param.put("query_item_list",queryItemList);
         requestParam.setPostJsonRequest(param);
         requestParam.setCallback(new MyCallBack<String>(){
@@ -154,7 +159,7 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
             public void onSuccess(String result) {
                 super.onSuccess(result);
                 LogUtils.d("result",result);
-                BaseEntity<ProjectList> entity= JsonParse.parse(result,ProjectList.class);
+                BaseEntity<ProjectListEntity> entity= JsonParse.parse(result, ProjectListEntity.class);
                 if(entity.isStatus()){
                     if(loadStatus==1){
                         dataList.clear();
@@ -224,6 +229,7 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
         if("ProjectFilter".equals(message.getMessage())){
             filterValue = SharedPreferencesManage.getFilterValueEntity();
             LogUtils.d(filterValue);
+            onRefresh();
         }
     }
 

@@ -3,9 +3,7 @@ package com.findingdata.oabank.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.findingdata.oabank.R;
-import com.findingdata.oabank.entity.NotifyEntity;
 import com.findingdata.oabank.entity.ProjectEntity;
-import com.findingdata.oabank.entity.ProjectInfo;
 import com.findingdata.oabank.utils.Utils;
 
 import java.util.List;
@@ -18,13 +16,13 @@ import androidx.annotation.Nullable;
  * Version: 1.0
  * Describe: 消息列表适配器
  */
-public class ProjectListAdapter extends BaseQuickAdapter<ProjectInfo, BaseViewHolder> {
-    public ProjectListAdapter(int layoutResId, @Nullable List<ProjectInfo> data) {
+public class ProjectListAdapter extends BaseQuickAdapter<ProjectEntity, BaseViewHolder> {
+    public ProjectListAdapter(int layoutResId, @Nullable List<ProjectEntity> data) {
         super(layoutResId, data);
     }
 
     @Override
-    protected void convert(@NonNull BaseViewHolder helper, ProjectInfo item) {
+    protected void convert(@NonNull BaseViewHolder helper, ProjectEntity item) {
         helper.setText(R.id.project_list_name,item.getPROJECT_NAME());
         helper.setText(R.id.project_list_client,item.getCUSTOMER_NAME());
         helper.setText(R.id.project_list_price,item.getLOAN_AMOUNT()+"万");

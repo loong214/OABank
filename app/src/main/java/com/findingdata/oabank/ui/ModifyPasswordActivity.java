@@ -1,7 +1,6 @@
 package com.findingdata.oabank.ui;
 
 import android.os.Bundle;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -11,8 +10,6 @@ import android.widget.TextView;
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
-import com.findingdata.oabank.entity.FilterEntity;
-import com.findingdata.oabank.entity.FilterValueEntity;
 import com.findingdata.oabank.entity.LoginEntity;
 import com.findingdata.oabank.utils.KeyBoardUtils;
 import com.findingdata.oabank.utils.LogUtils;
@@ -21,23 +18,15 @@ import com.findingdata.oabank.utils.http.HttpMethod;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
 import com.findingdata.oabank.utils.http.RequestParam;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
-import static com.findingdata.oabank.utils.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.BASE_URL;
 
 @ContentView(R.layout.activity_modify_password)
 public class ModifyPasswordActivity extends BaseActivity {

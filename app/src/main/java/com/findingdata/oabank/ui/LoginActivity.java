@@ -3,7 +3,6 @@ package com.findingdata.oabank.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.widget.EditText;
 
@@ -31,8 +30,7 @@ import java.util.Map;
 
 import androidx.annotation.Nullable;
 
-import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
-import static com.findingdata.oabank.utils.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.BASE_URL;
 
 /**
  * Created by zengx on 2019/11/16.
@@ -117,12 +115,6 @@ public class LoginActivity extends BaseActivity {
             public void onError(Throwable ex, boolean isOnCallback) {
                 super.onError(ex, isOnCallback);
                 showToast(ex.getMessage());
-            }
-
-            @Override
-            public void onFinished() {
-                super.onFinished();
-                stopProgressDialog();
             }
         });
         sendRequsest(requestParam,false);

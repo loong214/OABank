@@ -2,7 +2,6 @@ package com.findingdata.oabank.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,8 +16,6 @@ import com.findingdata.oabank.entity.EventBusMessage;
 import com.findingdata.oabank.entity.FilterEntity;
 import com.findingdata.oabank.entity.FilterItemEntity;
 import com.findingdata.oabank.entity.FilterValueEntity;
-import com.findingdata.oabank.entity.ProjectList;
-import com.findingdata.oabank.entity.QueryItem;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.http.HttpMethod;
@@ -46,8 +43,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
-import static com.findingdata.oabank.utils.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.BASE_URL;
 
 
 /**

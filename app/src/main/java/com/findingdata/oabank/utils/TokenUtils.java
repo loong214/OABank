@@ -11,7 +11,7 @@ import org.xutils.x;
 
 import java.util.Date;
 
-import static com.findingdata.oabank.utils.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.BASE_URL;
 
 /**
  * Created by Loong on 2019/12/18.

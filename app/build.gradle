@@ -1,9 +1,6 @@
 apply plugin: 'com.android.application'
 
 def Release_Url = "\"http://oa.cszfp.net:5810/\""
-//def Debug_Url = "\"http://192.168.2.102:3000/\""
-//def Debug_Url = "\"http://10.222.5.20:3000/\""
-//def Debug_Url = "\"http://192.168.0.200:3000/\""
 def Debug_Url = "\"http://finding2018.f3322.net:2092/\""
 
 android {
@@ -21,7 +18,6 @@ android {
                 GETUI_APP_KEY   : "uvA4Qzdbeh8keU8pYWswt9",
                 GETUI_APP_SECRET: "7S56GHtXju6UrGf1j0Rge4"
         ]
-        multiDexEnabled true
     }
     //签名
     signingConfigs {

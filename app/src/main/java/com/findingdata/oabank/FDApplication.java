@@ -48,4 +48,6 @@ public class FDApplication extends Application {
     public static Context getAppContext() {
         return FDApplication.getInstance.mContext;
     }
+
+
 }

@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
+import com.findingdata.oabank.entity.FilterValueEntity;
+import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.Utils;
 import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
@@ -19,6 +21,8 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.Nullable;
 
@@ -157,6 +161,9 @@ public class LaunchActivity extends BaseActivity {
      * 检查是否自动登录
      */
     private void checkAutoLogin(){
+        List<FilterValueEntity> filterValueEntities=new ArrayList<>();
+        //清空项目过滤的值
+        SharedPreferencesManage.setFilterValueEntity(filterValueEntities);
         handler.sendEmptyMessage(CHECK_LOGIN);
     }
 }

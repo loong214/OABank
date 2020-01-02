@@ -3,7 +3,6 @@ package com.findingdata.oabank.ui;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -18,9 +17,8 @@ import com.findingdata.oabank.R;
 import com.findingdata.oabank.adapter.ProjectListAdapter;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
-import com.findingdata.oabank.entity.NotifyListEntity;
-import com.findingdata.oabank.entity.ProjectInfo;
-import com.findingdata.oabank.entity.ProjectList;
+import com.findingdata.oabank.entity.ProjectEntity;
+import com.findingdata.oabank.entity.ProjectListEntity;
 import com.findingdata.oabank.entity.QueryItem;
 import com.findingdata.oabank.utils.KeyBoardUtils;
 import com.findingdata.oabank.utils.LogUtils;
@@ -30,7 +28,6 @@ import com.findingdata.oabank.utils.http.MyCallBack;
 import com.findingdata.oabank.utils.http.RequestParam;
 import com.findingdata.oabank.weidgt.RecyclerViewDivider;
 
-import org.xutils.common.util.LogUtil;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -45,8 +42,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
-import static com.findingdata.oabank.utils.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.BASE_URL;
 
 /**
  * Created by Loong on 2019/11/25.
@@ -65,8 +61,8 @@ public class ProjectSearchActivity extends BaseActivity implements SwipeRefreshL
     private RecyclerView mrv;
 
     private int pageIndex = 1;
-    private int pageSize = 5;
-    private List<ProjectInfo> dataList=new ArrayList<>();
+    private int pageSize = 10;
+    private List<ProjectEntity> dataList=new ArrayList<>();
     private ProjectListAdapter adapter;
     private int loadStatus=2;//1为刷新，2为加载更多
 
@@ -131,6 +127,9 @@ public class ProjectSearchActivity extends BaseActivity implements SwipeRefreshL
         param.put("page_num",pageIndex);
         param.put("page_size",pageSize);
         List<QueryItem> queryItemList=new ArrayList<>();
+        List<String> _value=new ArrayList<>();
+        _value.add(project_search_et.getText().toString());
+        queryItemList.add(new QueryItem("1005",_value));
         param.put("query_item_list",queryItemList);
         requestParam.setPostJsonRequest(param);
         requestParam.setCallback(new MyCallBack<String>(){
@@ -138,7 +137,7 @@ public class ProjectSearchActivity extends BaseActivity implements SwipeRefreshL
             public void onSuccess(String result) {
                 super.onSuccess(result);
                 LogUtils.d("result",result);
-                BaseEntity<ProjectList> entity= JsonParse.parse(result,ProjectList.class);
+                BaseEntity<ProjectListEntity> entity= JsonParse.parse(result, ProjectListEntity.class);
                 if(entity.isStatus()){
                     if(loadStatus==1){
                         dataList.clear();
@@ -189,7 +188,7 @@ public class ProjectSearchActivity extends BaseActivity implements SwipeRefreshL
                 finish();
                 break;
             case R.id.project_search_btn_submit:
-                showToast(project_search_et.getText().toString());
+                onRefresh();
                 break;
         }
     }

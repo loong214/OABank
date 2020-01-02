@@ -2,7 +2,6 @@ package com.findingdata.oabank.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,7 +10,6 @@ import com.findingdata.oabank.R;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.EventBusMessage;
-import com.findingdata.oabank.entity.NotifyListEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
 import com.findingdata.oabank.entity.Transition;
 import com.findingdata.oabank.utils.LogUtils;
@@ -27,9 +25,6 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -37,8 +32,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
-import static com.findingdata.oabank.utils.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.BASE_URL;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends BaseActivity {

@@ -60,7 +60,7 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
 
     //设置状态栏颜色
     protected void setStatusBar() {
-        StatusBarUtil.setStatusBarMode(this, true, R.color.body_background);
+        StatusBarUtil.setStatusBarMode(this, true, R.color.view_background);
     }
 
     //设置方向

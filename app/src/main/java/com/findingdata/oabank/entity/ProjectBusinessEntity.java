@@ -1,35 +1,37 @@
 package com.findingdata.oabank.entity;
 
+import java.io.Serializable;
+
 /**
- * Created by Loong on 2019/12/17.
+ * Created by Loong on 2020/1/2.
  * Version: 1.0
- * Describe: 项目的业务实体
+ * Describe: 项目事项实体
  */
-public class BusinessList {
+public class ProjectBusinessEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * PROJECT_BUSINESS_ID : 134816
-     * PROJECT_ID : 1481
-     * COMMISSIONED_ID : 3
-     * COMMISSIONED_NAME : 湖南经典
-     * COMMISSIONED_PHONE : 0731-12345678
+     * PROJECT_BUSINESS_ID : 135373
+     * PROJECT_ID : 1615
+     * COMMISSIONED_ID : 46
+     * COMMISSIONED_NAME : 长沙县经典
+     * COMMISSIONED_PHONE :
      * BUSINESS_TYPE : 40004001
      * BUSINESS_TYPE_CHS : 项目反馈
-     * EXECUTE_BY :
+     * EXECUTE_BY : 0
      * EXECUTE_NAME :
      * EXECUTE_PHONE :
      * EXECUTE_TIME :
      * COMPLETED_TIME :
-     * FILE_ID :
-     * IS_RETURN : 0
-     * RETURN_REASON :
+     * FILE_ID : 0
+     * IS_RETURN : 1
+     * RETURN_REASON : 项目超期重派
      * CREATE_NAME : 戚东卫
      * CREATE_BY : 1165
-     * CREATE_TIME : 2019-12-17T11:37:29
+     * CREATE_TIME : 2020-01-02T16:21:41
      * IS_DELETED : 0
      * IS_AUTO_DISPATCH : 1
-     * TOTAL_PRICE :
+     * TOTAL_PRICE : 0.0
      * FILE_CODE :
      * FILE_NAME :
      */
@@ -41,12 +43,12 @@ public class BusinessList {
     private String COMMISSIONED_PHONE;
     private int BUSINESS_TYPE;
     private String BUSINESS_TYPE_CHS;
-    private String EXECUTE_BY;
+    private int EXECUTE_BY;
     private String EXECUTE_NAME;
     private String EXECUTE_PHONE;
     private String EXECUTE_TIME;
     private String COMPLETED_TIME;
-    private String FILE_ID;
+    private int FILE_ID;
     private int IS_RETURN;
     private String RETURN_REASON;
     private String CREATE_NAME;
@@ -54,7 +56,7 @@ public class BusinessList {
     private String CREATE_TIME;
     private int IS_DELETED;
     private int IS_AUTO_DISPATCH;
-    private String TOTAL_PRICE;
+    private double TOTAL_PRICE;
     private String FILE_CODE;
     private String FILE_NAME;
 
@@ -114,11 +116,11 @@ public class BusinessList {
         this.BUSINESS_TYPE_CHS = BUSINESS_TYPE_CHS;
     }
 
-    public String getEXECUTE_BY() {
+    public int getEXECUTE_BY() {
         return EXECUTE_BY;
     }
 
-    public void setEXECUTE_BY(String EXECUTE_BY) {
+    public void setEXECUTE_BY(int EXECUTE_BY) {
         this.EXECUTE_BY = EXECUTE_BY;
     }
 
@@ -154,11 +156,11 @@ public class BusinessList {
         this.COMPLETED_TIME = COMPLETED_TIME;
     }
 
-    public String getFILE_ID() {
+    public int getFILE_ID() {
         return FILE_ID;
     }
 
-    public void setFILE_ID(String FILE_ID) {
+    public void setFILE_ID(int FILE_ID) {
         this.FILE_ID = FILE_ID;
     }
 
@@ -218,11 +220,11 @@ public class BusinessList {
         this.IS_AUTO_DISPATCH = IS_AUTO_DISPATCH;
     }
 
-    public String getTOTAL_PRICE() {
+    public double getTOTAL_PRICE() {
         return TOTAL_PRICE;
     }
 
-    public void setTOTAL_PRICE(String TOTAL_PRICE) {
+    public void setTOTAL_PRICE(double TOTAL_PRICE) {
         this.TOTAL_PRICE = TOTAL_PRICE;
     }
 

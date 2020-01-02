@@ -1,7 +1,7 @@
 package com.findingdata.oabank.utils.http;
 
 
-import com.findingdata.oabank.utils.Config;
+import com.findingdata.oabank.base.Config;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.TokenUtils;
 import com.google.gson.Gson;
@@ -13,7 +13,7 @@ import org.xutils.x;
 
 import java.util.Map;
 
-import static com.findingdata.oabank.utils.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.BASE_URL;
 
 /**
  * Created by Loong on 2019/11/20.

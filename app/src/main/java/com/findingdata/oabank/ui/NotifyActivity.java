@@ -1,9 +1,7 @@
 package com.findingdata.oabank.ui;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,15 +15,11 @@ import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.EventBusMessage;
 import com.findingdata.oabank.entity.NotifyEntity;
 import com.findingdata.oabank.entity.NotifyListEntity;
-import com.findingdata.oabank.entity.UserInfo;
-import com.findingdata.oabank.utils.Config;
 import com.findingdata.oabank.utils.LogUtils;
-import com.findingdata.oabank.utils.SharedPreferencesManage;
 import com.findingdata.oabank.utils.http.HttpMethod;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
 import com.findingdata.oabank.utils.http.RequestParam;
-import com.findingdata.oabank.utils.http.XHttp;
 import com.findingdata.oabank.weidgt.RecyclerViewDivider;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,8 +37,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
-import static com.findingdata.oabank.utils.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.BASE_URL;
 
 /**
  * Created by Loong on 2019/11/21.

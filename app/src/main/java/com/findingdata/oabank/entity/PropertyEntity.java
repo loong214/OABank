@@ -1,34 +1,41 @@
 package com.findingdata.oabank.entity;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
- * Created by Loong on 2019/12/17.
+ * Created by Loong on 2020/1/2.
  * Version: 1.0
- * Describe: 项目的属性实体
+ * Describe: 标的物实体
  */
-public class PropertyList {
+public class PropertyEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
+
     /**
-     * PROPERTY_ID : 1761
-     * PROJECT_ID : 1481
-     * PROPERTY_NAME : 测试超时情况的项目
+     * PROPERTY_ID : 1838
+     * PROJECT_ID : 1562
+     * PROPERTY_NAME : 北辰三角洲1栋101
      * PROPERTY_TYPE : 40002001
      * PROPERTY_TYPE_CHS : 住宅类型
-     * PCA_CODE : 430102
-     * PCA_CODE_CHS : 芙蓉区
-     * ADDRESS : 地址不迷裙楼改成
-     * AREA : 125.55
+     * PCA_CODE : 430105
+     * PCA_CODE_CHS : 开福区
+     * ADDRESS : 湘江北路三段1200号
+     * AREA : 66
      * INSPECTION_CONTACT :
      * INSPECTION_CONTACT_PHONE :
-     * LATITUDE : 0
-     * LONGITUDE : 0
+     * LATITUDE : 0.0
+     * LONGITUDE : 0.0
      * CREATE_BY : 1165
-     * CREATE_TIME : 2019-12-17T11:34:16
+     * CREATE_TIME : 2019-12-23T08:57:58
      * IS_DELETED : 0
-     * IS_QUICK_MODE : 0
-     * TOTAL_FLOOR : 0
-     * LOCATED_FLOOR : 0
+     * IS_QUICK_MODE :
+     * TOTAL_FLOOR :
+     * LOCATED_FLOOR :
      * PROPERTY_FORM_ID : 0
+     * PROPERTY_RIGHTS:[]
+     * PROPERTY_PRICES:[]
+     * PROPERTY_ATTACHMENTS:[]
      */
 
     private int PROPERTY_ID;
@@ -42,15 +49,19 @@ public class PropertyList {
     private double AREA;
     private String INSPECTION_CONTACT;
     private String INSPECTION_CONTACT_PHONE;
-    private int LATITUDE;
-    private int LONGITUDE;
+    private double LATITUDE;
+    private double LONGITUDE;
     private int CREATE_BY;
     private String CREATE_TIME;
     private int IS_DELETED;
-    private int IS_QUICK_MODE;
-    private int TOTAL_FLOOR;
-    private int LOCATED_FLOOR;
+    private String IS_QUICK_MODE;
+    private String TOTAL_FLOOR;
+    private String LOCATED_FLOOR;
     private int PROPERTY_FORM_ID;
+    private List<PropertyRightEntity> PROPERTY_RIGHTS;
+    private List<PropertyPriceEntity> PROPERTY_PRICES;
+    private List<PropertyAttachmentEntity> PROPERTY_ATTACHMENTS;
+
 
     public int getPROPERTY_ID() {
         return PROPERTY_ID;
@@ -140,19 +151,19 @@ public class PropertyList {
         this.INSPECTION_CONTACT_PHONE = INSPECTION_CONTACT_PHONE;
     }
 
-    public int getLATITUDE() {
+    public double getLATITUDE() {
         return LATITUDE;
     }
 
-    public void setLATITUDE(int LATITUDE) {
+    public void setLATITUDE(double LATITUDE) {
         this.LATITUDE = LATITUDE;
     }
 
-    public int getLONGITUDE() {
+    public double getLONGITUDE() {
         return LONGITUDE;
     }
 
-    public void setLONGITUDE(int LONGITUDE) {
+    public void setLONGITUDE(double LONGITUDE) {
         this.LONGITUDE = LONGITUDE;
     }
 
@@ -180,27 +191,27 @@ public class PropertyList {
         this.IS_DELETED = IS_DELETED;
     }
 
-    public int getIS_QUICK_MODE() {
+    public String getIS_QUICK_MODE() {
         return IS_QUICK_MODE;
     }
 
-    public void setIS_QUICK_MODE(int IS_QUICK_MODE) {
+    public void setIS_QUICK_MODE(String IS_QUICK_MODE) {
         this.IS_QUICK_MODE = IS_QUICK_MODE;
     }
 
-    public int getTOTAL_FLOOR() {
+    public String getTOTAL_FLOOR() {
         return TOTAL_FLOOR;
     }
 
-    public void setTOTAL_FLOOR(int TOTAL_FLOOR) {
+    public void setTOTAL_FLOOR(String TOTAL_FLOOR) {
         this.TOTAL_FLOOR = TOTAL_FLOOR;
     }
 
-    public int getLOCATED_FLOOR() {
+    public String getLOCATED_FLOOR() {
         return LOCATED_FLOOR;
     }
 
-    public void setLOCATED_FLOOR(int LOCATED_FLOOR) {
+    public void setLOCATED_FLOOR(String LOCATED_FLOOR) {
         this.LOCATED_FLOOR = LOCATED_FLOOR;
     }
 
@@ -210,5 +221,29 @@ public class PropertyList {
 
     public void setPROPERTY_FORM_ID(int PROPERTY_FORM_ID) {
         this.PROPERTY_FORM_ID = PROPERTY_FORM_ID;
+    }
+
+    public List<PropertyRightEntity> getPROPERTY_RIGHTS() {
+        return PROPERTY_RIGHTS;
+    }
+
+    public void setPROPERTY_RIGHTS(List<PropertyRightEntity> PROPERTY_RIGHTS) {
+        this.PROPERTY_RIGHTS = PROPERTY_RIGHTS;
+    }
+
+    public List<PropertyPriceEntity> getPROPERTY_PRICES() {
+        return PROPERTY_PRICES;
+    }
+
+    public void setPROPERTY_PRICES(List<PropertyPriceEntity> PROPERTY_PRICES) {
+        this.PROPERTY_PRICES = PROPERTY_PRICES;
+    }
+
+    public List<PropertyAttachmentEntity> getPROPERTY_ATTACHMENTS() {
+        return PROPERTY_ATTACHMENTS;
+    }
+
+    public void setPROPERTY_ATTACHMENTS(List<PropertyAttachmentEntity> PROPERTY_ATTACHMENTS) {
+        this.PROPERTY_ATTACHMENTS = PROPERTY_ATTACHMENTS;
     }
 }

@@ -2,30 +2,35 @@ package com.findingdata.oabank.ui;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.text.Spannable;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.findingdata.oabank.R;
+import com.findingdata.oabank.adapter.ImagePerviewListAdapter;
 import com.findingdata.oabank.base.BaseActivity;
+import com.findingdata.oabank.entity.BaseEntity;
+import com.findingdata.oabank.entity.ImageViewInfo;
+import com.findingdata.oabank.entity.ProjectEntity;
+import com.findingdata.oabank.utils.FilePathUtil;
+import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.PermissionsUtils;
-import com.findingdata.oabank.utils.Utils;
-import com.findingdata.oabank.weidgt.photopicker.GifSizeFilter;
-import com.findingdata.oabank.weidgt.photopicker.GlideEngine;
+import com.findingdata.oabank.utils.http.HttpMethod;
+import com.findingdata.oabank.utils.http.JsonParse;
+import com.findingdata.oabank.utils.http.MyCallBack;
+import com.findingdata.oabank.utils.http.RequestParam;
+import com.findingdata.oabank.weidgt.NoUnderlineSpan;
+import com.findingdata.oabank.weidgt.imagepreview.PreviewBuilder;
 import com.findingdata.oabank.weidgt.photopicker.PhotoPicker;
 import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.filter.Filter;
-import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import org.xutils.common.util.LogUtil;
 import org.xutils.view.annotation.ContentView;
@@ -34,13 +39,21 @@ import org.xutils.view.annotation.ViewInject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import top.zibin.luban.CompressionPredicate;
 import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
+
+import static com.findingdata.oabank.base.Config.BASE_URL;
+import static com.findingdata.oabank.base.Config.PHOTO_DIR_NAME;
+import static com.findingdata.oabank.base.Config.SD_APP_DIR_NAME;
 
 /**
  * Created by Loong on 2019/11/27.
@@ -49,37 +62,165 @@ import top.zibin.luban.OnCompressListener;
  */
 @ContentView(R.layout.activity_project_detail)
 public class ProjectDetailActivity extends BaseActivity {
-    private static final String[] permiss={Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+    private static final String[] permission={Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int REQUEST_CODE_CHOOSE=0x001;
-
-    public static final String SD_APP_DIR_NAME = "TestDir"; //存储程序在外部SD卡上的根目录的名字
-    public static final String PHOTO_DIR_NAME = "photo";    //存储照片在根目录下的文件夹名字
 
     @ViewInject(R.id.toolbar_tv_title)
     private TextView toolbar_tv_title;
     @ViewInject(R.id.project_detail_tv_id)
     private TextView project_detail_tv_id;
-    @ViewInject(R.id.project_detail_iv_test)
-    private ImageView project_detail_iv_test;
+    @ViewInject(R.id.project_detail_tv_load_type)
+    private TextView project_detail_tv_load_type;
+    @ViewInject(R.id.project_detail_tv_load_price)
+    private TextView project_detail_tv_load_price;
+    @ViewInject(R.id.project_detail_tv_loader)
+    private TextView project_detail_tv_loader;
+    @ViewInject(R.id.project_detail_tv_loader_tel)
+    private TextView project_detail_tv_loader_tel;
+    @ViewInject(R.id.project_detail_tv_client)
+    private TextView project_detail_tv_client;
+    @ViewInject(R.id.project_detail_tv_client_tel)
+    private TextView project_detail_tv_client_tel;
+    @ViewInject(R.id.project_detail_tv_manager)
+    private TextView project_detail_tv_manager;
+    @ViewInject(R.id.project_detail_tv_manager_tel)
+    private TextView project_detail_tv_manager_tel;
 
+
+
+
+
+    @ViewInject(R.id.rlv_image)
+    private RecyclerView rlv_image;
+
+    List<ImageViewInfo> dataList=new ArrayList<>();
+    private ImagePerviewListAdapter adapter;
+    private GridLayoutManager mGridLayoutManager;
+    private int project_id;
+    private ProjectEntity projectEntity;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         toolbar_tv_title.setText("项目详情");
-        project_detail_tv_id.setText(getIntent().getExtras().getInt("project_id")+"");
+        project_id=getIntent().getExtras().getInt("project_id");
+        LogUtil.d(getIntent().getExtras().getInt("project_id")+"");
 
-        PermissionsUtils.getInstance().chekPermissions(this, permiss, new PermissionsUtils.IPermissionsResult() {
+        PermissionsUtils.getInstance().checkPermissions(this, permission, new PermissionsUtils.IPermissionsResult() {
             @Override
-            public void passPermissons() {
+            public void success() {
                 LogUtil.d("申请权限通过");
             }
 
             @Override
-            public void forbitPermissons() {
+            public void fail() {
                 LogUtil.d("申请权限未通过");
                 finish();
             }
         });
+
+        rlv_image.setLayoutManager(mGridLayoutManager=new GridLayoutManager(this,3));
+        adapter=new ImagePerviewListAdapter(this,dataList);
+        rlv_image.setAdapter(adapter);
+        rlv_image.addOnItemTouchListener(new OnItemClickListener() {
+            @Override
+            public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+                computeBoundsBackward(mGridLayoutManager.findFirstVisibleItemPosition());
+                PreviewBuilder.from(ProjectDetailActivity.this)
+                        .setImgs(adapter.getData())
+                        .setCurrentIndex(position)
+                        .setSingleFling(true)
+                        .setType(PreviewBuilder.IndicatorType.Number)
+                        .start();
+            }
+        });
+        getData();
+    }
+
+    private void initView(){
+        NoUnderlineSpan mNoUnderlineSpan = new NoUnderlineSpan();
+        project_detail_tv_id.setText(projectEntity.getPROJECT_ID()+"");
+        project_detail_tv_load_type.setText(projectEntity.getLOAN_TYPE_CHS());
+        project_detail_tv_load_price.setText(projectEntity.getLOAN_AMOUNT()+"");
+        project_detail_tv_loader.setText(projectEntity.getBORROWER());
+        if (!TextUtils.isEmpty(projectEntity.getBORROWER_PHONE())) {
+            project_detail_tv_loader_tel.setText(projectEntity.getBORROWER_PHONE());
+        } else {
+            project_detail_tv_loader_tel.setVisibility(View.GONE);
+        }
+        if (project_detail_tv_loader_tel.getText() instanceof Spannable) {
+            Spannable s = (Spannable) project_detail_tv_loader_tel.getText();
+            s.setSpan(mNoUnderlineSpan, 0, s.length(), Spanned.SPAN_MARK_MARK);
+        }
+        project_detail_tv_client.setText(projectEntity.getCONTACT_PERSON());
+        if (!TextUtils.isEmpty(projectEntity.getCONTACT_PHONE())) {
+            project_detail_tv_client_tel.setText(projectEntity.getCONTACT_PHONE());
+        } else {
+            project_detail_tv_client_tel.setVisibility(View.GONE);
+        }
+        if (project_detail_tv_client_tel.getText() instanceof Spannable) {
+            Spannable s = (Spannable) project_detail_tv_client_tel.getText();
+            s.setSpan(mNoUnderlineSpan, 0, s.length(), Spanned.SPAN_MARK_MARK);
+        }
+        project_detail_tv_manager.setText(projectEntity.getBCM_NAME());
+        if (!TextUtils.isEmpty(projectEntity.getBCM_PHONE())) {
+            project_detail_tv_manager_tel.setText(projectEntity.getBCM_PHONE());
+        } else {
+            project_detail_tv_manager_tel.setVisibility(View.GONE);
+        }
+        if (project_detail_tv_manager_tel.getText() instanceof Spannable) {
+            Spannable s = (Spannable) project_detail_tv_manager_tel.getText();
+            s.setSpan(mNoUnderlineSpan, 0, s.length(), Spanned.SPAN_MARK_MARK);
+        }
+
+    }
+
+    private void getData(){
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Project/GetProjectInfo");
+        requestParam.setMethod(HttpMethod.Get);
+        Map<String,String> requestMap=new HashMap<>();
+        requestMap.put("project_id",project_id+"");
+        requestParam.setGetRequestMap(requestMap);
+        requestParam.setCallback(new MyCallBack<String>(){
+            @Override
+            public void onSuccess(String result) {
+                super.onSuccess(result);
+                LogUtils.d("result",result);
+                BaseEntity<ProjectEntity> entity= JsonParse.parse(result,ProjectEntity.class);
+                if(entity.isStatus()){
+                    projectEntity=entity.getResult();
+                    initView();
+                }else{
+                    showToast(entity.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                super.onError(ex, isOnCallback);
+                showToast(ex.getMessage());
+            }
+
+            @Override
+            public void onFinished() {
+                super.onFinished();
+                stopProgressDialog();
+            }
+        });
+        sendRequsest(requestParam,true);
+    }
+
+    //计算返回的边界
+    private void computeBoundsBackward(int firstCompletelyVisiblePos) {
+        for (int i = firstCompletelyVisiblePos; i < adapter.getItemCount(); i++) {
+            View itemView = mGridLayoutManager.findViewByPosition(i);
+            Rect bounds = new Rect();
+            if (itemView != null) {
+                ImageView imageView = itemView.findViewById(R.id.iiv_item_image_preview);
+                imageView.getGlobalVisibleRect(bounds);
+            }
+            adapter.getItem(i).setBounds(bounds);
+        }
     }
 
     @Event({R.id.toolbar_btn_back,R.id.project_detail_tv_test1,R.id.project_detail_tv_test2,R.id.project_detail_tv_test3})
@@ -109,9 +250,9 @@ public class ProjectDetailActivity extends BaseActivity {
             List<String> _List = new ArrayList<>();
             for (Uri _Uri : pathList)
             {
-                String _Path = getPathByUri(_Uri);
+                String _Path = FilePathUtil.getPathByUri(this,_Uri);
                 File _File = new File(_Path);
-                System.out.println("压缩前图片大小->" + _File.length() / 1024 + "k");
+                LogUtil.d("压缩前图片大小->" + _File.length() / 1024 + "k");
                 _List.add(_Path);
             }
             compress(_List);
@@ -124,11 +265,10 @@ public class ProjectDetailActivity extends BaseActivity {
         PermissionsUtils.getInstance().onRequestPermissionsResult(this,requestCode,permissions,grantResults);
     }
 
-
-    private void compress(List<String> list)
-    {
-        String _Path = getImagesPath();
-        System.out.println("_Path->" + _Path);
+    //压缩图片
+    private void compress(List<String> list){
+        String _Path = FilePathUtil.createPathIfNotExist("/" + SD_APP_DIR_NAME + "/" + PHOTO_DIR_NAME);
+        LogUtil.d("_Path->" + _Path);
         Luban.with(this)
                 .load(list)
                 .ignoreBy(100)
@@ -142,82 +282,22 @@ public class ProjectDetailActivity extends BaseActivity {
                 .setCompressListener(new OnCompressListener() {
                     @Override
                     public void onStart() {
-                        // TODO 压缩开始前调用，可以在方法内启动 loading UI
-                        showToast(" 压缩开始前调用，可以在方法内启动 loading UI");
+                        LogUtil.d(" 压缩开始前调用，可以在方法内启动 loading UI");
                     }
 
                     @Override
                     public void onSuccess(File file) {
-                        // TODO 压缩成功后调用，返回压缩后的图片文件
-                        showToast(" 压缩成功后调用，返回压缩后的图片文件");
-                        Glide.with(ProjectDetailActivity.this).load(file).into(project_detail_iv_test);
-
+                        LogUtil.d(" 压缩成功后调用，返回压缩后的图片文件");
+                        dataList.add(new ImageViewInfo(file.getAbsolutePath()));
+                        adapter.notifyDataSetChanged();
                         LogUtil.d("压缩后图片大小->" + file.length() / 1024 + "k");
                         LogUtil.d("getAbsolutePath->" + file.getAbsolutePath());
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        // TODO 当压缩过程出现问题时调用
                         e.printStackTrace();
                     }
                 }).launch();
-    }
-
-    private String getImagesPath()
-    {
-        return createPathIfNotExist("/" + SD_APP_DIR_NAME + "/" + PHOTO_DIR_NAME);
-    }
-    private String createPathIfNotExist(String pPath)
-    {
-        boolean sdExist = android.os.Environment.MEDIA_MOUNTED.equals(android.os.Environment.getExternalStorageState());
-        if (!sdExist) {
-            LogUtil.d("SD卡不存在");
-            return null;
-        }
-        String _AbsolutePath = android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + pPath;
-        System.out.println("dbDir->" + _AbsolutePath);
-        File dirFile = new File(_AbsolutePath);
-        if (!dirFile.exists()) {
-            if (!dirFile.mkdirs())
-            {
-                LogUtil.d("文件夹创建失败");
-                return null;
-            }
-        }
-        return _AbsolutePath;
-    }
-    /**
-     * 通过Uri获取文件路径
-     * @param pUri
-     * @return
-     */
-    public String getPathByUri(Uri pUri)
-    {
-//      pUri.getPath()
-//      拍照后输出：  /mq_external_cache/storage/emulated/0/Pictures/JPEG_20190326_225011.jpg
-//      选择照片后的输出：  /external/images/media/52325
-        String _Path = pUri.getPath();
-
-        if (_Path.endsWith(".jpg"))
-        {
-            System.out.println("path-->" + subPath(_Path));
-            return subPath(_Path);
-        }
-        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-        Cursor cursor = this.getContentResolver().query(pUri,
-                filePathColumn, null, null, null);
-        cursor.moveToFirst();
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String picturePath = cursor.getString(columnIndex);
-        cursor.close();
-        return picturePath;
-    }
-
-
-    private String subPath(String pPath)
-    {
-        String[] array = pPath.split("/");
-        return pPath.substring(array[1].length() + 1, pPath.length());
     }
 }

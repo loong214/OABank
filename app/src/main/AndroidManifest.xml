@@ -46,6 +46,8 @@
         <activity android:name=".ui.ProjectSearchActivity" android:windowSoftInputMode="adjustUnspecified|stateHidden" />
         <activity android:name=".ui.ProjectDetailActivity" />
         <activity android:name=".ui.ModifyPasswordActivity" />
+        <activity android:name=".weidgt.imagepreview.ui.PreviewActivity"/>
+        <activity android:name=".weidgt.imagepreview.ui.VideoPlayerActivity" />
 
         <receiver android:name=".receiver.NetBroadcastReceiver">
             <intent-filter>

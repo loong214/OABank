@@ -22,8 +22,8 @@ import androidx.core.content.ContextCompat;
  * Describe:权限管理工具类
  */
 public class PermissionsUtils {
-    public final int mRequestCode = 0x100;
-    public static boolean showSystemSetting = true;
+    private final int mRequestCode = 0x100;
+    private static boolean showSystemSetting = true;
 
     private PermissionsUtils() {
     }
@@ -38,11 +38,11 @@ public class PermissionsUtils {
         return permissionsUtils;
     }
 
-    public void chekPermissions(Activity context, String[] permissions, @NonNull IPermissionsResult permissionsResult) {
+    public void checkPermissions(Activity context, String[] permissions, @NonNull IPermissionsResult permissionsResult) {
         mPermissionsResult = permissionsResult;
 
         if (Build.VERSION.SDK_INT < 23) {//6.0才用动态权限
-            permissionsResult.passPermissons();
+            permissionsResult.success();
             return;
         }
 
@@ -60,11 +60,8 @@ public class PermissionsUtils {
             ActivityCompat.requestPermissions(context, permissions, mRequestCode);
         } else {
             //说明权限都已经通过，可以做你想做的事情去
-            permissionsResult.passPermissons();
-            return;
+            permissionsResult.success();
         }
-
-
     }
 
     //请求权限后回调的方法
@@ -86,11 +83,11 @@ public class PermissionsUtils {
                 if (showSystemSetting) {
                     showSystemPermissionsSettingDialog(context);//跳转到系统设置权限页面，或者直接关闭页面，不让他继续访问
                 } else {
-                    mPermissionsResult.forbitPermissons();
+                    mPermissionsResult.fail();
                 }
             } else {
                 //全部权限通过，可以进行下一步操作。。。
-                mPermissionsResult.passPermissons();
+                mPermissionsResult.success();
             }
         }
 
@@ -123,8 +120,7 @@ public class PermissionsUtils {
                         public void onClick(DialogInterface dialog, int which) {
                             //关闭页面或者做其他操作
                             cancelPermissionDialog();
-                            //mContext.finish();
-                            mPermissionsResult.forbitPermissons();
+                            mPermissionsResult.fail();
                         }
                     })
                     .create();
@@ -143,8 +139,8 @@ public class PermissionsUtils {
 
 
     public interface IPermissionsResult {
-        void passPermissons();
+        void success();
 
-        void forbitPermissons();
+        void fail();
     }
 }
