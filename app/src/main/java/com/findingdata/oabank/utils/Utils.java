@@ -53,8 +53,8 @@ public class Utils {
 
     public static String transformIOSTime(String time){
         String str=time.replace("T","日 ");
-        str=str.replaceFirst("/-/","年");
-        str=str.replaceFirst("/-/","月");
+        str=str.replaceFirst("-","年");
+        str=str.replaceFirst("-","月");
         return str;
     }
 

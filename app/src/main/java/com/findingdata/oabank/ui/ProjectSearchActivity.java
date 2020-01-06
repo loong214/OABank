@@ -188,6 +188,7 @@ public class ProjectSearchActivity extends BaseActivity implements SwipeRefreshL
                 finish();
                 break;
             case R.id.project_search_btn_submit:
+                KeyBoardUtils.hideSoftInputMode(this, getWindow().peekDecorView());
                 onRefresh();
                 break;
         }

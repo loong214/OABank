@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -18,11 +21,17 @@ import com.findingdata.oabank.R;
 import com.findingdata.oabank.adapter.ImagePerviewListAdapter;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
+import com.findingdata.oabank.entity.EventBusMessage;
+import com.findingdata.oabank.entity.FilterEntity;
 import com.findingdata.oabank.entity.ImageViewInfo;
+import com.findingdata.oabank.entity.ProjectCenterListType;
 import com.findingdata.oabank.entity.ProjectEntity;
+import com.findingdata.oabank.entity.ProjectNoteEntity;
+import com.findingdata.oabank.entity.PropertyEntity;
 import com.findingdata.oabank.utils.FilePathUtil;
 import com.findingdata.oabank.utils.LogUtils;
 import com.findingdata.oabank.utils.PermissionsUtils;
+import com.findingdata.oabank.utils.Utils;
 import com.findingdata.oabank.utils.http.HttpMethod;
 import com.findingdata.oabank.utils.http.JsonParse;
 import com.findingdata.oabank.utils.http.MyCallBack;
@@ -30,14 +39,21 @@ import com.findingdata.oabank.utils.http.RequestParam;
 import com.findingdata.oabank.weidgt.NoUnderlineSpan;
 import com.findingdata.oabank.weidgt.imagepreview.PreviewBuilder;
 import com.findingdata.oabank.weidgt.photopicker.PhotoPicker;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.zhihu.matisse.Matisse;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
 import org.xutils.common.util.LogUtil;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,8 +101,20 @@ public class ProjectDetailActivity extends BaseActivity {
     private TextView project_detail_tv_manager;
     @ViewInject(R.id.project_detail_tv_manager_tel)
     private TextView project_detail_tv_manager_tel;
-
-
+    @ViewInject(R.id.project_detail_ll_business)
+    private LinearLayout project_detail_ll_business;
+    @ViewInject(R.id.project_detail_tv_company)
+    private TextView project_detail_tv_company;
+    @ViewInject(R.id.project_detail_tv_company_tel)
+    private TextView project_detail_tv_company_tel;
+    @ViewInject(R.id.project_detail_tv_contact)
+    private TextView project_detail_tv_contact;
+    @ViewInject(R.id.project_detail_tv_contact_tel)
+    private TextView project_detail_tv_contact_tel;
+    @ViewInject(R.id.project_detail_ll_property)
+    private LinearLayout project_detail_ll_property;
+    @ViewInject(R.id.project_detail_ll_note)
+    private LinearLayout project_detail_ll_note;
 
 
 
@@ -103,7 +131,6 @@ public class ProjectDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         toolbar_tv_title.setText("项目详情");
         project_id=getIntent().getExtras().getInt("project_id");
-        LogUtil.d(getIntent().getExtras().getInt("project_id")+"");
 
         PermissionsUtils.getInstance().checkPermissions(this, permission, new PermissionsUtils.IPermissionsResult() {
             @Override
@@ -134,6 +161,8 @@ public class ProjectDetailActivity extends BaseActivity {
             }
         });
         getData();
+
+        EventBus.getDefault().register(this);
     }
 
     private void initView(){
@@ -170,6 +199,87 @@ public class ProjectDetailActivity extends BaseActivity {
         if (project_detail_tv_manager_tel.getText() instanceof Spannable) {
             Spannable s = (Spannable) project_detail_tv_manager_tel.getText();
             s.setSpan(mNoUnderlineSpan, 0, s.length(), Spanned.SPAN_MARK_MARK);
+        }
+
+        if(projectEntity.getPROJECT_STATUS()!= ProjectCenterListType.Todo.getType()){
+            project_detail_ll_business.setVisibility(View.VISIBLE);
+            project_detail_tv_company.setText(projectEntity.getBUSINESS().getCOMMISSIONED_NAME());
+            project_detail_tv_company_tel.setText(projectEntity.getBUSINESS().getCOMMISSIONED_PHONE());
+            project_detail_tv_contact.setText(projectEntity.getBUSINESS().getEXECUTE_NAME());
+            project_detail_tv_contact_tel.setText(projectEntity.getBUSINESS().getEXECUTE_PHONE());
+        }else{
+            project_detail_ll_business.setVisibility(View.GONE);
+        }
+        List<PropertyEntity> propertyEntityList = projectEntity.getPROPERTY_LIST();
+        for (int i = 0; i <propertyEntityList.size() ; i++) {
+            PropertyEntity property=propertyEntityList.get(i);
+            View v= LayoutInflater.from(this).inflate(R.layout.item_project_property,null);
+            TextView property_city=v.findViewById(R.id.project_property_city);
+            property_city.setText("["+property.getPCA_CODE_CHS()+"]");
+            TextView property_type=v.findViewById(R.id.project_property_type);
+            property_type.setText("["+property.getPROPERTY_TYPE_CHS()+"]");
+            TextView property_name=v.findViewById(R.id.project_property_name);
+            property_name.setText(property.getPROPERTY_NAME());
+            TextView property_address=v.findViewById(R.id.project_property_address);
+            property_address.setText(property.getADDRESS());
+            TextView property_area=v.findViewById(R.id.project_property_area);
+            property_area.setText(property.getAREA()+"平方米");
+            TextView property_contact=v.findViewById(R.id.project_property_contact);
+            property_contact.setText(property.getINSPECTION_CONTACT());
+            TextView property_contact_tel=v.findViewById(R.id.project_property_contact_tel);
+            if(!TextUtils.isEmpty(property.getINSPECTION_CONTACT())){
+                property_contact_tel.setText(property.getINSPECTION_CONTACT());
+                if (property_contact_tel.getText() instanceof Spannable) {
+                    Spannable s = (Spannable) property_contact_tel.getText();
+                    s.setSpan(mNoUnderlineSpan, 0, s.length(), Spanned.SPAN_MARK_MARK);
+                }
+            }else{
+                property_contact_tel.setVisibility(View.GONE);
+            }
+            TextView property_owner=v.findViewById(R.id.project_property_owner);
+            property_owner.setText(property.getPROPERTY_RIGHTS().get(0).getPROPERTY_OWNER());//多个产权人怎么办？
+            TextView property_owner_tel=v.findViewById(R.id.project_property_owner_tel);
+            if(!TextUtils.isEmpty(property.getPROPERTY_RIGHTS().get(0).getPROPERTY_OWNER_PHONE())){
+                property_owner_tel.setText(property.getPROPERTY_RIGHTS().get(0).getPROPERTY_OWNER_PHONE());
+                if (property_owner_tel.getText() instanceof Spannable) {
+                    Spannable s = (Spannable) property_owner_tel.getText();
+                    s.setSpan(mNoUnderlineSpan, 0, s.length(), Spanned.SPAN_MARK_MARK);
+                }
+            }else{
+                property_owner_tel.setVisibility(View.GONE);
+            }
+            ImageButton button=v.findViewById(R.id.project_property_upload);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PhotoPicker.pick(ProjectDetailActivity.this,true,REQUEST_CODE_CHOOSE);
+                }
+            });
+            project_detail_ll_property.addView(v);
+        }
+        initNote();
+    }
+
+    private void initNote(){
+        int size = project_detail_ll_note.getChildCount();
+        LogUtil.d(size+"");
+        for (int i = 1; i < size; i++) {
+            project_detail_ll_note.removeViewAt(1);
+        }
+        List<ProjectNoteEntity> projectNoteEntities = projectEntity.getNOTE_LIST();
+        for (int i = 0; i <projectNoteEntities.size() ; i++) {
+            ProjectNoteEntity note=projectNoteEntities.get(i);
+            View v= LayoutInflater.from(this).inflate(R.layout.item_project_note,null);
+            TextView note_create=v.findViewById(R.id.project_note_create);
+            note_create.setText(note.getCREATE_NAME());
+            TextView note_customer=v.findViewById(R.id.project_note_customer);
+            note_customer.setText("["+note.getCUSTOMER_NAME()+"]");
+            TextView note_time=v.findViewById(R.id.project_note_time);
+            String time=Utils.transformIOSTime(note.getCREATE_TIME());
+            note_time.setText(time.substring(5,17));
+            TextView content=v.findViewById(R.id.project_note_content);
+            content.setText(note.getPROJECT_NOTE_CONTENT());
+            project_detail_ll_note.addView(v,i+1);
         }
 
     }
@@ -210,6 +320,44 @@ public class ProjectDetailActivity extends BaseActivity {
         sendRequsest(requestParam,true);
     }
 
+    private void getProjectNote(){
+        RequestParam requestParam=new RequestParam();
+        requestParam.setUrl(BASE_URL+"/api/Project/GetProejctNotes");
+        requestParam.setMethod(HttpMethod.Get);
+        Map<String,String> requestMap=new HashMap<>();
+        requestMap.put("project_id",project_id+"");
+        requestParam.setGetRequestMap(requestMap);
+        requestParam.setCallback(new MyCallBack<String>(){
+            @Override
+            public void onSuccess(String result) {
+                super.onSuccess(result);
+                LogUtils.d("result",result);
+                Type type = new TypeToken<List<ProjectNoteEntity>>() {}.getType();
+                BaseEntity<List<ProjectNoteEntity>> entity= JsonParse.parseList(result,type);
+                if(entity.isStatus()){
+                    projectEntity.setNOTE_LIST(entity.getResult());
+                    initNote();
+//                    getData();
+                }else{
+                    showToast(entity.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                super.onError(ex, isOnCallback);
+                showToast(ex.getMessage());
+            }
+
+            @Override
+            public void onFinished() {
+                super.onFinished();
+                stopProgressDialog();
+            }
+        });
+        sendRequsest(requestParam,false);
+    }
+
     //计算返回的边界
     private void computeBoundsBackward(int firstCompletelyVisiblePos) {
         for (int i = firstCompletelyVisiblePos; i < adapter.getItemCount(); i++) {
@@ -223,11 +371,17 @@ public class ProjectDetailActivity extends BaseActivity {
         }
     }
 
-    @Event({R.id.toolbar_btn_back,R.id.project_detail_tv_test1,R.id.project_detail_tv_test2,R.id.project_detail_tv_test3})
+    @Event({R.id.toolbar_btn_back,R.id.project_detail_tv_note,
+            R.id.project_detail_tv_test1,R.id.project_detail_tv_test2,R.id.project_detail_tv_test3})
     private void onClickEvent(View v){
         switch (v.getId()){
             case R.id.toolbar_btn_back:
                 finish();
+                break;
+            case R.id.project_detail_tv_note:
+                Bundle bundle=new Bundle();
+                bundle.putInt("project_id",project_id);
+                startActivity(AddNoteActivity.class,bundle);
                 break;
             case R.id.project_detail_tv_test1:
                 PhotoPicker.pick(this,REQUEST_CODE_CHOOSE);
@@ -238,6 +392,20 @@ public class ProjectDetailActivity extends BaseActivity {
             case R.id.project_detail_tv_test3:
                 PhotoPicker.pick(this,10,true,REQUEST_CODE_CHOOSE);
                 break;
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void Event(EventBusMessage message){
+        if("AddNote".equals(message.getMessage())){
+            getProjectNote();
         }
     }
 
