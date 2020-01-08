@@ -113,7 +113,7 @@ public class NavigationViewFragment extends BaseFragment {
                 showToast(ex.getMessage());
             }
         });
-        sendRequsest(requestParam,false);
+        sendRequest(requestParam,false);
 
     }
     //初始化视图

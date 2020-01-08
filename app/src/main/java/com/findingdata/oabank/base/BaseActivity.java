@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Message;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.findingdata.oabank.R;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import static com.findingdata.oabank.FDApplication.activityTrans;
 import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
@@ -36,10 +37,13 @@ import static com.findingdata.oabank.base.BaseHandler.HTTP_REQUEST;
  * Created by zengx on 2019/11/17.
  * Describe: Activity基础类
  */
-public class BaseActivity extends AppCompatActivity implements NetBroadcastReceiver.NetEvent {
+public class BaseActivity extends FragmentActivity implements NetBroadcastReceiver.NetEvent {
     public NetBroadcastReceiver netBroadcastReceiver;
     public static NetBroadcastReceiver.NetEvent event;
     private ProgressDialogView progressDialogView = null;
+
+    private boolean isFullScreen;
+    private boolean showStatus;
 
     private static List<Callback.Cancelable> taskList;
 
@@ -50,22 +54,37 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
         super.onCreate(savedInstanceState);
         event=this;
         ExitAppUtils.getInstance().addActivity(this);
+
+        //设置无标题
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //垂直显示
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        if(isFullScreen){
+            if(showStatus){
+                StatusBarUtil.setTranslucentStatus(this);
+            }else{
+                StatusBarUtil.fullScreen(this);
+            }
+        }else{
+            StatusBarUtil.setStatusBarMode(this, true, R.color.view_background);
+        }
         x.view().inject(this);
-        setStatusBar();
-        setOrientation();
+
         initReceiver();
         taskList=new ArrayList<>();
         handler=new BaseHandler(this,taskList);
     }
 
-    //设置状态栏颜色
-    protected void setStatusBar() {
-        StatusBarUtil.setStatusBarMode(this, true, R.color.view_background);
-    }
 
-    //设置方向
-    protected void setOrientation() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+    /**
+     * 是否全屏
+     * @return
+     */
+    protected void setFullScreen(boolean showStatus){
+        this.isFullScreen=true;
+        this.showStatus=showStatus;
     }
 
     //注册网络状态检测广播服务
@@ -105,7 +124,12 @@ public class BaseActivity extends AppCompatActivity implements NetBroadcastRecei
         LogUtils.d(NetworkUtils.isNetConnect(netMobile));
     }
 
-    protected void sendRequsest(RequestParam requestParam,boolean showProgressDialog){
+    /**
+     * 发送一个请求
+     * @param requestParam 请求体
+     * @param showProgressDialog 是否转菊花
+     */
+    protected void sendRequest(RequestParam requestParam,boolean showProgressDialog){
         if(isNetConnect){
             if(showProgressDialog){
                 startProgressDialog();

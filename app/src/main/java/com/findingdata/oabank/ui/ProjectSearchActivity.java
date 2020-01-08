@@ -178,7 +178,7 @@ public class ProjectSearchActivity extends BaseActivity implements SwipeRefreshL
                 stopProgressDialog();
             }
         });
-        sendRequsest(requestParam,true);
+        sendRequest(requestParam,true);
     }
 
     @Event({R.id.toolbar_btn_back,R.id.project_search_btn_submit})

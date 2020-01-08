@@ -9,7 +9,7 @@
         <!--默认的光标、选中的RadioButton颜色-->
         <item name="colorAccent">@color/colorAccent</item>
         <!-- 避免控件会顶到状态栏上 -->
-        <item name="android:fitsSystemWindows">true</item>
+<!--        <item name="android:fitsSystemWindows">true</item>-->
     </style>
 
     <!-- 启动页样式 -->

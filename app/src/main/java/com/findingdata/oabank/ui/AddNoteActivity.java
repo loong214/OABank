@@ -96,6 +96,6 @@ public class AddNoteActivity extends BaseActivity {
                 stopProgressDialog();
             }
         });
-        sendRequsest(requestParam,true);
+        sendRequest(requestParam,true);
     }
 }

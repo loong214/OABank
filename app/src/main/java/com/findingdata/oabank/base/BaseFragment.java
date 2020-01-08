@@ -72,7 +72,7 @@ public class BaseFragment extends Fragment {
         }
     }
 
-    protected void sendRequsest(RequestParam requestParam, boolean showProgressDialog){
+    protected void sendRequest(RequestParam requestParam, boolean showProgressDialog){
         if(((BaseActivity)getActivity()).isNetConnect){
             if(showProgressDialog){
                 startProgressDialog();

@@ -40,6 +40,7 @@ public class LaunchActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setFullScreen(false);
         super.onCreate(savedInstanceState);
         tv_loading_version.setText("v-"+ Utils.getCurrentVersion(this)+" : "+Utils.getCurrentBuild(this));
         checkVersion();

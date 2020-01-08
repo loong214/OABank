@@ -116,7 +116,7 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
                 showToast(ex.getMessage());
             }
         });
-        sendRequsest(requestParam,false);
+        sendRequest(requestParam,false);
     }
 
     /**
@@ -176,7 +176,7 @@ public class NotifyActivity extends BaseActivity implements SwipeRefreshLayout.O
                 stopProgressDialog();
             }
         });
-        sendRequsest(requestParam,false);
+        sendRequest(requestParam,false);
     }
 
 

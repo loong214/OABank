@@ -117,6 +117,6 @@ public class LoginActivity extends BaseActivity {
                 showToast(ex.getMessage());
             }
         });
-        sendRequsest(requestParam,false);
+        sendRequest(requestParam,false);
     }
 }

@@ -123,6 +123,6 @@ public class ModifyPasswordActivity extends BaseActivity {
                 stopProgressDialog();
             }
         });
-        sendRequsest(requestParam,true);
+        sendRequest(requestParam,true);
     }
 }

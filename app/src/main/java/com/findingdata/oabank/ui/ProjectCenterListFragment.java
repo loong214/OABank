@@ -200,7 +200,7 @@ public class ProjectCenterListFragment extends BaseFragment implements SwipeRefr
                 stopProgressDialog();
             }
         });
-        sendRequsest(requestParam,true);
+        sendRequest(requestParam,true);
 
     }
     @Override

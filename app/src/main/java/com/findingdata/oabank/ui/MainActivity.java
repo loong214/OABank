@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity {
                 showToast(ex.getMessage());
             }
         });
-        sendRequsest(requestParam,false);
+        sendRequest(requestParam,false);
     }
 
     private void initTabs() {

@@ -9,6 +9,8 @@ import android.text.Spannable;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,8 +24,8 @@ import com.findingdata.oabank.adapter.ImagePerviewListAdapter;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.EventBusMessage;
-import com.findingdata.oabank.entity.FilterEntity;
 import com.findingdata.oabank.entity.ImageViewInfo;
+import com.findingdata.oabank.entity.ProjectActionEntity;
 import com.findingdata.oabank.entity.ProjectCenterListType;
 import com.findingdata.oabank.entity.ProjectEntity;
 import com.findingdata.oabank.entity.ProjectNoteEntity;
@@ -39,20 +41,19 @@ import com.findingdata.oabank.utils.http.RequestParam;
 import com.findingdata.oabank.weidgt.NoUnderlineSpan;
 import com.findingdata.oabank.weidgt.imagepreview.PreviewBuilder;
 import com.findingdata.oabank.weidgt.photopicker.PhotoPicker;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zhihu.matisse.Matisse;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONArray;
 import org.xutils.common.util.LogUtil;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +62,8 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.MenuPopupHelper;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import top.zibin.luban.CompressionPredicate;
@@ -83,6 +86,8 @@ public class ProjectDetailActivity extends BaseActivity {
 
     @ViewInject(R.id.toolbar_tv_title)
     private TextView toolbar_tv_title;
+    @ViewInject(R.id.toolbar_btn_action)
+    private ImageButton toolbar_btn_action;
     @ViewInject(R.id.project_detail_tv_id)
     private TextView project_detail_tv_id;
     @ViewInject(R.id.project_detail_tv_load_type)
@@ -115,7 +120,8 @@ public class ProjectDetailActivity extends BaseActivity {
     private LinearLayout project_detail_ll_property;
     @ViewInject(R.id.project_detail_ll_note)
     private LinearLayout project_detail_ll_note;
-
+    @ViewInject(R.id.project_detail_ll_news)
+    private LinearLayout project_detail_ll_news;
 
 
     @ViewInject(R.id.rlv_image)
@@ -130,6 +136,7 @@ public class ProjectDetailActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         toolbar_tv_title.setText("项目详情");
+        toolbar_btn_action.setVisibility(View.VISIBLE);
         project_id=getIntent().getExtras().getInt("project_id");
 
         PermissionsUtils.getInstance().checkPermissions(this, permission, new PermissionsUtils.IPermissionsResult() {
@@ -258,11 +265,24 @@ public class ProjectDetailActivity extends BaseActivity {
             project_detail_ll_property.addView(v);
         }
         initNote();
+        initAction();
+    }
+
+    private void initAction(){
+        List<ProjectActionEntity> actionList=projectEntity.getACT_LIST();
+        for (int i = 0; i < actionList.size(); i++) {
+            ProjectActionEntity action=actionList.get(i);
+            View v= LayoutInflater.from(this).inflate(R.layout.item_project_news,null);
+            TextView content=v.findViewById(R.id.project_news_tv_content);
+            String time=Utils.transformIOSTime(action.getCREATE_TIME());
+            time=time.substring(5,17);
+            content.setText("["+time+"]"+action.getACT_CONTENT());
+            project_detail_ll_news.addView(v);
+        }
     }
 
     private void initNote(){
         int size = project_detail_ll_note.getChildCount();
-        LogUtil.d(size+"");
         for (int i = 1; i < size; i++) {
             project_detail_ll_note.removeViewAt(1);
         }
@@ -317,7 +337,7 @@ public class ProjectDetailActivity extends BaseActivity {
                 stopProgressDialog();
             }
         });
-        sendRequsest(requestParam,true);
+        sendRequest(requestParam,true);
     }
 
     private void getProjectNote(){
@@ -355,7 +375,7 @@ public class ProjectDetailActivity extends BaseActivity {
                 stopProgressDialog();
             }
         });
-        sendRequsest(requestParam,false);
+        sendRequest(requestParam,false);
     }
 
     //计算返回的边界
@@ -371,7 +391,8 @@ public class ProjectDetailActivity extends BaseActivity {
         }
     }
 
-    @Event({R.id.toolbar_btn_back,R.id.project_detail_tv_note,
+    @Event({R.id.toolbar_btn_back,R.id.project_detail_tv_note,R.id.add_note_btn_estimate,R.id.add_note_btn_apply,
+            R.id.toolbar_btn_action,
             R.id.project_detail_tv_test1,R.id.project_detail_tv_test2,R.id.project_detail_tv_test3})
     private void onClickEvent(View v){
         switch (v.getId()){
@@ -382,6 +403,15 @@ public class ProjectDetailActivity extends BaseActivity {
                 Bundle bundle=new Bundle();
                 bundle.putInt("project_id",project_id);
                 startActivity(AddNoteActivity.class,bundle);
+                break;
+            case R.id.add_note_btn_apply:
+                showToast("申请");
+                break;
+            case R.id.add_note_btn_estimate:
+                showToast("评估成果");
+                break;
+            case R.id.toolbar_btn_action:
+                showItemDialog();
                 break;
             case R.id.project_detail_tv_test1:
                 PhotoPicker.pick(this,REQUEST_CODE_CHOOSE);
@@ -394,7 +424,64 @@ public class ProjectDetailActivity extends BaseActivity {
                 break;
         }
     }
+    /**
+     * 显示功能dialog
+     */
+    private void showItemDialog() {
+        PopupMenu popup = new PopupMenu(this, toolbar_btn_action);
+        Menu menu = popup.getMenu();
+        menu.add(0, 2, 2, "项目暂停").setIcon(R.drawable.ic_action_pause_normal);
+        menu.add(0, 3, 3, "项目终止").setIcon(R.drawable.ic_action_stop_normal);
+        menu.add(0, 4, 4, "价格异议").setIcon(R.drawable.ic_action_help);
+        menu.add(0, 5, 5, "改派公司").setIcon(R.drawable.ic_action_todo_normal);
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                showToast(item.getTitle().toString());
+                switch (item.getItemId()) {
+                    case 1:
+                        //projectAction(3);
+                        break;
+                    case 2:
+                        projectAction(2);
+                        break;
+                    case 3:
+//                        startActivity(new Intent(ProjectDetailsActivity.this, ApplyTerminationActivity.class).putExtra("project_id", project_id));
+                        break;
+                    case 4:
+                        projectAction(6);
+                        break;
+                    case 5:
+//                        startActivity(new Intent(ProjectDetailsActivity.this, AddNoteActivity.class).putExtra("project_id", project_id));
+                        break;
+                }
+                return true;
+            }
+        });
+        /*
+         * 反射显示布局中的图标  我也不懂..抄的
+         * */
+        try {
+            Field field = popup.getClass().getDeclaredField("mPopup");
+            field.setAccessible(true);
+            MenuPopupHelper helper = (MenuPopupHelper) field.get(popup);
+            helper.setForceShowIcon(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        popup.show();
 
+    }
+
+    /**
+     * 项目动作
+     *
+     * @param action 2:暂停,3:继续,6:价格异议
+     */
+    private void projectAction(int action) {
+
+    }
 
     @Override
     protected void onDestroy() {

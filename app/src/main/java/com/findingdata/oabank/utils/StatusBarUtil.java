@@ -1,6 +1,5 @@
 package com.findingdata.oabank.utils;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
@@ -13,6 +12,8 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import static android.os.Build.VERSION_CODES.KITKAT;
 
 /**
  * Created by Loong on 2019/11/17.
@@ -33,7 +34,7 @@ public class StatusBarUtil {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
 
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        } else if (Build.VERSION.SDK_INT >= KITKAT) {
             Window window = activity.getWindow();
             window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -55,7 +56,7 @@ public class StatusBarUtil {
             //需要设置这个 flag 才能调用 setStatusBarColor 来设置状态栏颜色
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(activity.getResources().getColor(colorId));
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        } else if (Build.VERSION.SDK_INT >= KITKAT) {
             //使用SystemBarTint库使4.4版本状态栏变色，需要先将状态栏设置为透明
             setTranslucentStatus(activity);
             //设置状态栏颜色
@@ -76,7 +77,7 @@ public class StatusBarUtil {
         //修改状态栏颜色和文字图标颜色
         setStatusBarColor(activity, colorId);
         //4.4以上才可以改文字图标颜色
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if(Build.VERSION.SDK_INT >= KITKAT) {
             if(RomUtil.isMiui()) {
                 //小米MIUI系统
                 setMIUIStatusBarTextMode(activity, isTextDark);
@@ -93,14 +94,6 @@ public class StatusBarUtil {
                 //4.4以上6.0以下的其他系统，暂时没有修改状态栏的文字图标颜色的方法，有可以加上
             }
         }
-
-
-//        if(!isTextDark) {
-//            //文字、图标颜色不变，只修改状态栏颜色
-//            setStatusBarColor(activity, colorId);
-//        } else {
-//
-//        }
     }
 
     /**
@@ -165,9 +158,10 @@ public class StatusBarUtil {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     //开发版 7.7.13 及以后版本采用了系统API，旧方法无效但不会报错，所以两个方式都要加上
                     if (isDark) {
-                        activity.getWindow().getDecorView().setSystemUiVisibility(View
-                                .SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View
-                                .SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+
                     } else {
                         activity.getWindow().getDecorView().setSystemUiVisibility(View
                                 .SYSTEM_UI_FLAG_VISIBLE);
@@ -180,4 +174,28 @@ public class StatusBarUtil {
         Log.d("status",result+"");
         return result;
     }
+    /**
+     * 全屏
+     *
+     * @param activity
+     */
+    public static void fullScreen(Activity activity) {
+        fullScreen(activity.getWindow());
+    }
+
+    /**
+     * 全屏
+     *
+     * @param window
+     */
+    public static void fullScreen(Window window) {
+        if (Build.VERSION.SDK_INT >= KITKAT) {
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    }
+
 }
