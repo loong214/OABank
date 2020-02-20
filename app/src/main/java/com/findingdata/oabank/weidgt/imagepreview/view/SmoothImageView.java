@@ -556,7 +556,7 @@ public class SmoothImageView extends PhotoView {
         initSmoothImageView();
     }
 
-    /***
+    /***item_image_key
      * 设置图片拖拽返回
      * @param isDrag true  可以 false 默认 true
      * @param sensitivity 灵敏度

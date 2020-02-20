@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.findingdata.oabank.R;
-import com.findingdata.oabank.adapter.ImagePerviewListAdapter;
+import com.findingdata.oabank.adapter.ImagePreviewListAdapter;
 import com.findingdata.oabank.base.BaseActivity;
 import com.findingdata.oabank.entity.BaseEntity;
 import com.findingdata.oabank.entity.EventBusMessage;
@@ -128,7 +128,7 @@ public class ProjectDetailActivity extends BaseActivity {
     private RecyclerView rlv_image;
 
     List<ImageViewInfo> dataList=new ArrayList<>();
-    private ImagePerviewListAdapter adapter;
+    private ImagePreviewListAdapter adapter;
     private GridLayoutManager mGridLayoutManager;
     private int project_id;
     private ProjectEntity projectEntity;
@@ -153,7 +153,7 @@ public class ProjectDetailActivity extends BaseActivity {
         });
 
         rlv_image.setLayoutManager(mGridLayoutManager=new GridLayoutManager(this,3));
-        adapter=new ImagePerviewListAdapter(this,dataList);
+        adapter=new ImagePreviewListAdapter(this,dataList);
         rlv_image.setAdapter(adapter);
         rlv_image.addOnItemTouchListener(new OnItemClickListener() {
             @Override
@@ -259,7 +259,8 @@ public class ProjectDetailActivity extends BaseActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PhotoPicker.pick(ProjectDetailActivity.this,true,REQUEST_CODE_CHOOSE);
+                    startActivity(PropertyAttachmentActivity.class);
+//                    PhotoPicker.pick(ProjectDetailActivity.this,true,REQUEST_CODE_CHOOSE);
                 }
             });
             project_detail_ll_property.addView(v);

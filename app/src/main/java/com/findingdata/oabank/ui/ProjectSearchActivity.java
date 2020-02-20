@@ -70,7 +70,7 @@ public class ProjectSearchActivity extends BaseActivity implements SwipeRefreshL
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         toolbar_title.setText("项目搜索");
-        project_search_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            project_search_et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
